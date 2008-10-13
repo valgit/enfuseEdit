@@ -8,6 +8,13 @@
 
 #import "enfuseEdit.h"
 
+// Categories : private methods
+@interface enfuseController (Private)
+
+-(void)setDefaults;
+-(void)getDefaults;
+
+@end
 
 @implementation enfuseEdit
 
@@ -57,6 +64,19 @@
 	[_editManager release];
 	
 	[super dealloc];
+}
+
+// maybe store some default ?
++ (void)initialize
+{
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSDictionary *appDefaults = [NSDictionary dictionaryWithObjectsAndKeys:
+                @"YES", @"useCIECAM",
+                @"default", @"cachesize",
+                @"default", @"blocksize",
+                nil];
+
+    [defaults registerDefaults:appDefaults];
 }
 
 // when first launched, this routine is called when all objects are created
@@ -532,6 +552,7 @@
 		   [args addObject:[NSString stringWithFormat:@"--wSigma=%@",[mSigmaSlider stringValue]]];
 		   
 		   NSLog(@"%s will exec : %@",__PRETTY_FUNCTION__,args);
+
 	   }
 }
 
@@ -542,18 +563,10 @@
 // It will be called whenever there is output from the TaskWrapper.
 - (void)appendOutput:(NSString *)output
 {
-    // add the string (a chunk of the results from locate) to the NSTextView's
-    // backing store, in the form of an attributed string
-    NSLog(@"output is : [%@]", output);
-    [mProgress incrementBy:1.0];
-
-    //[[resultsTextField textStorage] appendAttributedString: [[[NSAttributedString alloc]
-    //                         initWithString: output] autorelease]];
-    // setup a selector to be called the next time through the event loop to scroll
-    // the view to the just pasted text.  We don't want to scroll right now,
-    // because of a bug in Mac OS X version 10.1 that causes scrolling in the context
-    // of a text storage update to starve the app of events
-    //[self performSelector:@selector(scrollToVisible:) withObject:nil afterDelay:0.0];
+   if ([output hasPrefix:@"Generating"] || [output hasPrefix:@"Collapsing"]  ||
+        [output hasPrefix: @"Loading next image"] || [output hasPrefix: @"Using"] ) {
+        [mProgessIndicator incrementBy:1.0];
+    } 
 }
 
 // A callback that gets called when a TaskWrapper is launched, allowing us to do any setup
@@ -568,7 +581,11 @@
     //[mRestoreButton setTitle:@"Stop"];
     [mEnfuseButton setEnabled:NO];
     [mProgress startAnimation:self];
-
+#ifdef _PROGRESSPANEL_
+		   [[myProgress window] center];
+		   [[myProgress window] makeKeyAndOrderFront:nil]; // nspanel was originally hidden in Interface Builder
+		   [[myProgress window] display];
+#endif
 }
 
 // A callback that gets called when a TaskWrapper is completed, allowing us to do any cleanup
@@ -584,7 +601,40 @@
     // change the button's title back for the next search
     //[mEnfuseButton setTitle:@"Enfuse"];
     [mEnfuseButton setEnabled:YES];
+#ifdef _PROGRESSPANEL_
+    [[myProgress window] orderOut:nil];
+#endif
 }
 
+@end
+
+@implementation enfuseEdit (Private)
+
+// write back the defaults ...
+-(void)setDefaults;
+{
+        NSUserDefaults *standardUserDefaults = [NSUserDefaults standardUserDefaults];
+
+        if (standardUserDefaults) {
+              [standardUserDefaults setObject:[mOuputFile stringValue] forKey:@"outputDirectory"];
+              [standardUserDefaults setObject:[mOutFile stringValue] forKey:@"outputFile"];
+              [standardUserDefaults setObject:[mAppendTo stringValue] forKey:@"outputAppendTo"];
+              [standardUserDefaults setObject:[mOutQuality stringValue] forKey:@"outputQuality"];
+              [standardUserDefaults synchronize];
+        }
+}
+
+// read back the defaults ...
+-(void)getDefaults;
+{
+        NSUserDefaults *standardUserDefaults = [NSUserDefaults standardUserDefaults];
+
+        if (standardUserDefaults) {
+              [mOuputFile setStringValue:[standardUserDefaults objectForKey:@"outputDirectory"]];
+              [mOutFile setStringValue:[standardUserDefaults objectForKey:@"outputFile"]];
+              [mAppendTo setStringValue:[standardUserDefaults objectForKey:@"outputAppendTo"]];
+              [mOutQuality setStringValue:[standardUserDefaults objectForKey:@"outputQuality"]];
+        }
+}
 
 @end
