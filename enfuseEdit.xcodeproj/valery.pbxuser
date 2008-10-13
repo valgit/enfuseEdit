@@ -1,0 +1,210 @@
+// !$*UTF8*$!
+{
+	089C1669FE841209C02AAC07 /* Project object */ = {
+		activeBuildConfigurationName = Debug;
+		activeExecutable = 1A69658A0E9567D100FE9F6B /* Aperture 2.x */;
+		activeTarget = 8D5B49AC048680CD000E48DA /* enfuseEdit */;
+		addToTargets = (
+			8D5B49AC048680CD000E48DA /* enfuseEdit */,
+		);
+		breakpoints = (
+		);
+		breakpointsGroup = 1A69652A0E95603800FE9F6B /* XCBreakpointsBucket */;
+		codeSenseManager = 1AEDA15D0E8FE94E000A34EA /* Code sense */;
+		executables = (
+			1A69658A0E9567D100FE9F6B /* Aperture 2.x */,
+		);
+		perUserDictionary = {
+			"PBXConfiguration.PBXBreakpointsDataSource.v1:1CA1AED706398EBD00589147" = {
+				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
+				PBXFileTableDataSourceColumnSortingKey = PBXBreakpointsDataSource_BreakpointID;
+				PBXFileTableDataSourceColumnWidthsKey = (
+					20,
+					20,
+					210,
+					20,
+					110,
+					109,
+					20,
+				);
+				PBXFileTableDataSourceColumnsKey = (
+					PBXBreakpointsDataSource_ActionID,
+					PBXBreakpointsDataSource_TypeID,
+					PBXBreakpointsDataSource_BreakpointID,
+					PBXBreakpointsDataSource_UseID,
+					PBXBreakpointsDataSource_LocationID,
+					PBXBreakpointsDataSource_ConditionID,
+					PBXBreakpointsDataSource_ContinueID,
+				);
+			};
+			PBXConfiguration.PBXFileTableDataSource3.PBXExecutablesDataSource = {
+				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
+				PBXFileTableDataSourceColumnSortingKey = PBXExecutablesDataSource_NameID;
+				PBXFileTableDataSourceColumnWidthsKey = (
+					22,
+					300,
+					131,
+				);
+				PBXFileTableDataSourceColumnsKey = (
+					PBXExecutablesDataSource_ActiveFlagID,
+					PBXExecutablesDataSource_NameID,
+					PBXExecutablesDataSource_CommentsID,
+				);
+			};
+			PBXConfiguration.PBXFileTableDataSource3.PBXFileTableDataSource = {
+				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
+				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
+				PBXFileTableDataSourceColumnWidthsKey = (
+					20,
+					243,
+					20,
+					48,
+					43,
+					43,
+					20,
+				);
+				PBXFileTableDataSourceColumnsKey = (
+					PBXFileDataSource_FiletypeID,
+					PBXFileDataSource_Filename_ColumnID,
+					PBXFileDataSource_Built_ColumnID,
+					PBXFileDataSource_ObjectSize_ColumnID,
+					PBXFileDataSource_Errors_ColumnID,
+					PBXFileDataSource_Warnings_ColumnID,
+					PBXFileDataSource_Target_ColumnID,
+				);
+			};
+			PBXConfiguration.PBXTargetDataSource.PBXTargetDataSource = {
+				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
+				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
+				PBXFileTableDataSourceColumnWidthsKey = (
+					20,
+					200,
+					63,
+					20,
+					48.1626,
+					43,
+					43,
+				);
+				PBXFileTableDataSourceColumnsKey = (
+					PBXFileDataSource_FiletypeID,
+					PBXFileDataSource_Filename_ColumnID,
+					PBXTargetDataSource_PrimaryAttribute,
+					PBXFileDataSource_Built_ColumnID,
+					PBXFileDataSource_ObjectSize_ColumnID,
+					PBXFileDataSource_Errors_ColumnID,
+					PBXFileDataSource_Warnings_ColumnID,
+				);
+			};
+			PBXPerProjectTemplateStateSaveDate = 245564368;
+			PBXWorkspaceStateSaveDate = 245564368;
+		};
+		perUserProjectItems = {
+			1AACDFD40EA0696600255E1C /* PBXTextBookmark */ = 1AACDFD40EA0696600255E1C /* PBXTextBookmark */;
+			1AD7A2820EA30A56000DD240 /* PBXTextBookmark */ = 1AD7A2820EA30A56000DD240 /* PBXTextBookmark */;
+		};
+		sourceControlManager = 1AEDA15C0E8FE94E000A34EA /* Source Control */;
+		userBuildSettings = {
+		};
+	};
+	1A69652A0E95603800FE9F6B /* XCBreakpointsBucket */ = {
+		isa = XCBreakpointsBucket;
+		name = "Project Breakpoints";
+		objects = (
+		);
+	};
+	1A69658A0E9567D100FE9F6B /* Aperture 2.x */ = {
+		isa = PBXExecutable;
+		activeArgIndex = 2147483647;
+		activeArgIndices = (
+		);
+		argumentStrings = (
+		);
+		autoAttachOnCrash = 1;
+		configStateDict = {
+		};
+		customDataFormattersEnabled = 1;
+		debuggerPlugin = GDBDebugging;
+		disassemblyDisplayState = 0;
+		dylibVariantSuffix = "";
+		enableDebugStr = 1;
+		environmentEntries = (
+		);
+		executableSystemSymbolLevel = 0;
+		executableUserSymbolLevel = 0;
+		launchableReference = 1A69658B0E9567D200FE9F6B /* Aperture.app */;
+		libgmallocEnabled = 0;
+		name = "Aperture 2.x";
+		savedGlobals = {
+		};
+		sourceDirectories = (
+		);
+		variableFormatDictionary = {
+		};
+	};
+	1A69658B0E9567D200FE9F6B /* Aperture.app */ = {
+		isa = PBXFileReference;
+		explicitFileType = wrapper.application;
+		name = Aperture.app;
+		path = /Applications/Aperture.app;
+		sourceTree = "<absolute>";
+	};
+	1AACDFD40EA0696600255E1C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D15DEA4D0ABF63C600CBE3A5 /* enfuseEdit.m */;
+		name = "enfuseEdit.m: 477";
+		rLen = 0;
+		rLoc = 16143;
+		rType = 0;
+		vrLen = 1537;
+		vrLoc = 15514;
+	};
+	1AD7A2820EA30A56000DD240 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D15DEA4D0ABF63C600CBE3A5 /* enfuseEdit.m */;
+		name = editableVersionsOfVersions;
+		rLen = 26;
+		rLoc = 8533;
+		rType = 0;
+		vrLen = 1409;
+		vrLoc = 7887;
+	};
+	1AEDA15C0E8FE94E000A34EA /* Source Control */ = {
+		isa = PBXSourceControlManager;
+		fallbackIsa = XCSourceControlManager;
+		isSCMEnabled = 0;
+		scmConfiguration = {
+		};
+		scmType = "";
+	};
+	1AEDA15D0E8FE94E000A34EA /* Code sense */ = {
+		isa = PBXCodeSenseManager;
+		indexTemplatePath = "";
+	};
+	8D5B49AC048680CD000E48DA /* enfuseEdit */ = {
+		activeExec = 0;
+	};
+	8D5B49B7048680CD000E48DA /* Info.plist */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1018, 1064}}";
+			sepNavSelRange = "{1897, 0}";
+			sepNavVisRect = "{{0, 83}, {1018, 617}}";
+			sepNavWindowFrame = "{{194, 75}, {1057, 746}}";
+		};
+	};
+	D15DEA4D0ABF63C600CBE3A5 /* enfuseEdit.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1148, 8274}}";
+			sepNavSelRange = "{8533, 26}";
+			sepNavVisRect = "{{0, 3468}, {1018, 617}}";
+			sepNavWindowFrame = "{{217, 55}, {1057, 746}}";
+		};
+	};
+	D15DEA4E0ABF63C600CBE3A5 /* enfuseEdit.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1018, 1358}}";
+			sepNavSelRange = "{2056, 11}";
+			sepNavVisRect = "{{0, 727}, {1018, 617}}";
+			sepNavWindowFrame = "{{207, 107}, {1057, 746}}";
+		};
+	};
+}
