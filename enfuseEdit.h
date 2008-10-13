@@ -73,6 +73,8 @@
   NSString *_enfusePath; 
   BOOL findRunning;
   TaskWrapper *enfuseTask;
+
+  NSString* _outputfile;
 }
 
 - (IBAction)_cancelEditing:(id)sender;
@@ -92,5 +94,8 @@
 
 - (IBAction) openPresets: (IBOutlet)sender;
 - (IBAction) savePresets: (IBOutlet)sender;
+
+-(NSString*)outputfile;
+-(void)setOutputfile:(NSString *)file;
 
 @end

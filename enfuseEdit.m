@@ -190,11 +190,22 @@
 - (void)editManager:(id<ApertureEditManager>)editManager didImportImageAtPath:(NSString *)path versionUniqueID:(NSString *)versionUniqueID
 {
 	NSLog(@"%s",__PRETTY_FUNCTION__);
+
+	// add some keywords ...
+	NSArray *version = [NSArray arrayWithObject:versionUniqueId];
+	NSString *keyword = @"Enfuse";
+	NSArray *keywordHierarchy = [NSArray arrayWithObject:keyword];
+	NSArray *keywords =  [NSArray arrayWithObject:keywordHierarchy];
+	[_editManager addHierarchicalKeywords:keywords toVersions:version];
+    [_editManager endEditSession];
 }
 
 - (void)editManager:(id<ApertureEditManager>)editManager didNotImportImageAtPath:(NSString *)path error:(NSError *)error;
 {
 	NSLog(@"%s",__PRETTY_FUNCTION__);
+	// should we display something here ?
+	// Tell Aperture to cancel
+	[_editManager cancelEditSession];
 }
 
 #pragma mark -
@@ -211,6 +222,8 @@
 		[enfuseTask release];
 		enfuseTask=nil;
 	}
+  // maybe we should to some cleanup ?
+  //- (void)deleteVersions:(NSArray *)versionUniqueIDs;
 
 	// Tell Aperture to cancel
 	[_editManager cancelEditSession];
@@ -219,16 +232,21 @@
 - (IBAction)_doneEditing:(id)sender
 {
   NSLog(@"%s",__PRETTY_FUNCTION__);
-  
+
+  // maybe we should to some cleanup ?
+  //- (void)deleteVersions:(NSArray *)versionUniqueIDs;
+
   if ([_editManager canImport]) {
     NSLog(@"%s will import",__PRETTY_FUNCTION__);
-	NSString *enfuseImage= @"/Users/valery/Pictures/working/test.tiff"; // TODO
-	[_editManager importImageAtPath:enfuseImage referenced:YES stackWithVersions:[_editManager selectedVersionIds]];
+	//NSString *enfuseImage= @"/Users/valery/Pictures/working/test.tiff"; // TODO
+	[_editManager importImageAtPath:[self outputfile] referenced:YES stackWithVersions:[_editManager selectedVersionIds]];
     // - (id)importedVersionIds;
 
 
   } else {
     NSLog(@"%s can't import !",__PRETTY_FUNCTION__);
+    // should we display something here ?
+    [_editManager endEditSession];
   }
 #if 0
 	// The whole point of this method is to actually write out the changes the user has made
@@ -260,7 +278,6 @@
 		}
 	}
 #endif				
-	[_editManager endEditSession];
 }
 
 
@@ -518,7 +535,12 @@
 		   [args addObject:_enfusePath];
 		   
 		   [args addObject:@"-o"];
-		   [args addObject:@"bad_test.tiff"]; // TODO
+		   NSString *outputfile = NSHomeDirectory();
+                   outputfile = [outputfile stringByAppendingPathComponent:@"Pictures"];
+		   NSString *tempString = [[NSProcessInfo processInfo] globallyUniqueString];
+      		   outputfile = [outputfile stringByAppendingPathComponent:tempString];
+		   [self setOutputfile:[NSString stringWithFormat:@"%@.%@",tempFilename,@"tiff"]]; // TODO
+		   [args addObject:[self outputfile]]; // TODO
 		   
 		   //int i, count = [[_editManager selectedVersionIds] count];
 		   //NSLog(@"%s adding selected : %d",__PRETTY_FUNCTION__,count);
@@ -604,6 +626,19 @@
 #ifdef _PROGRESSPANEL_
     [[myProgress window] orderOut:nil];
 #endif
+}
+
+-(NSString*)outputfile;
+{
+        return _outputfile;
+}
+
+-(void)setOutputfile:(NSString *)file;
+{
+        if (_outputfile != file) {
+                [_outputfile release];
+        _outputfile = [file copy];
+        }
 }
 
 @end
