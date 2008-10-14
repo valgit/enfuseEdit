@@ -7,7 +7,7 @@
         }, 
         {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
         {
-            CLASS = MyPrefsWindowController; 
+            CLASS = enfuseEditPrefsWindowController; 
             LANGUAGE = ObjC; 
             OUTLETS = {generalPrefsView = NSView; updatePrefsView = NSView; }; 
             SUPERCLASS = DBPrefsWindowController; 

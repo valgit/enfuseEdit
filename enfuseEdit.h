@@ -60,6 +60,7 @@
   IBOutlet NSTextField* mContrastWindowSizeTextField;
   IBOutlet NSTextField* mMinCurvatureTextField;
 
+  IBOutlet NSPanel *mProgressWindow;
   IBOutlet NSProgressIndicator *mProgress;
 
 	@private

@@ -8,6 +8,13 @@
 
 /* Begin PBXBuildFile section */
 		1A6965380E95606300FE9F6B /* TaskWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A6965370E95606300FE9F6B /* TaskWrapper.m */; };
+		1AAE75BD0EA452FD00271EA0 /* DBPrefsWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AAE75BA0EA452FD00271EA0 /* DBPrefsWindowController.m */; };
+		1AAE75BE0EA452FD00271EA0 /* enfuseEditPrefsWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AAE75BC0EA452FD00271EA0 /* enfuseEditPrefsWindowController.m */; };
+		1AAE75C20EA4531C00271EA0 /* general.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AAE75C00EA4531C00271EA0 /* general.png */; };
+		1AAE75C30EA4531C00271EA0 /* update.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 1AAE75C10EA4531C00271EA0 /* update.tiff */; };
+		1AAE75CB0EA453BE00271EA0 /* Preferences.nib in Resources */ = {isa = PBXBuildFile; fileRef = 1AAE75C50EA453BE00271EA0 /* Preferences.nib */; };
+		1AAE76290EA4551000271EA0 /* enfuse in Resources */ = {isa = PBXBuildFile; fileRef = 1AAE76280EA4551000271EA0 /* enfuse */; };
+		1AAE76500EA4554C00271EA0 /* enfuse in CopyFiles */ = {isa = PBXBuildFile; fileRef = 1AAE76280EA4551000271EA0 /* enfuse */; };
 		8D5B49B0048680CD000E48DA /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C167DFE841241C02AAC07 /* InfoPlist.strings */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
 		D118EA660AC08CCB006DD2FE /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = D118EA640AC08CCB006DD2FE /* Localizable.strings */; };
@@ -16,6 +23,19 @@
 		D15DEA520ABF641300CBE3A5 /* enfuseEdit.nib in Resources */ = {isa = PBXBuildFile; fileRef = D15DEA500ABF641300CBE3A5 /* enfuseEdit.nib */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		1AAE764E0EA4553B00271EA0 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 6;
+			files = (
+				1AAE76500EA4554C00271EA0 /* enfuse in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		089C1672FE841209C02AAC07 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		089C167EFE841241C02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -23,6 +43,14 @@
 		1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		1A6965360E95606300FE9F6B /* TaskWrapper.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TaskWrapper.h; sourceTree = "<group>"; };
 		1A6965370E95606300FE9F6B /* TaskWrapper.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = TaskWrapper.m; sourceTree = "<group>"; };
+		1AAE75B90EA452FD00271EA0 /* DBPrefsWindowController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DBPrefsWindowController.h; sourceTree = "<group>"; };
+		1AAE75BA0EA452FD00271EA0 /* DBPrefsWindowController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = DBPrefsWindowController.m; sourceTree = "<group>"; };
+		1AAE75BB0EA452FD00271EA0 /* enfuseEditPrefsWindowController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = enfuseEditPrefsWindowController.h; sourceTree = "<group>"; };
+		1AAE75BC0EA452FD00271EA0 /* enfuseEditPrefsWindowController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = enfuseEditPrefsWindowController.m; sourceTree = "<group>"; };
+		1AAE75C00EA4531C00271EA0 /* general.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = general.png; sourceTree = "<group>"; };
+		1AAE75C10EA4531C00271EA0 /* update.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = update.tiff; sourceTree = "<group>"; };
+		1AAE75C60EA453BE00271EA0 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/Preferences.nib; sourceTree = "<group>"; };
+		1AAE76280EA4551000271EA0 /* enfuse */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = enfuse; sourceTree = "<group>"; };
 		287924C40DAEB3990074992A /* ApertureEditManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApertureEditManager.h; sourceTree = "<group>"; };
 		287924C50DAEB3990074992A /* ApertureEditPlugIn.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApertureEditPlugIn.h; sourceTree = "<group>"; };
 		287924C60DAEB3990074992A /* ApertureSDKCommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApertureSDKCommon.h; sourceTree = "<group>"; };
@@ -77,6 +105,9 @@
 			children = (
 				D15DEA500ABF641300CBE3A5 /* enfuseEdit.nib */,
 				8D5B49B7048680CD000E48DA /* Info.plist */,
+				1AAE75C50EA453BE00271EA0 /* Preferences.nib */,
+				1AAE75C00EA4531C00271EA0 /* general.png */,
+				1AAE75C10EA4531C00271EA0 /* update.tiff */,
 				D118EA640AC08CCB006DD2FE /* Localizable.strings */,
 				089C167DFE841241C02AAC07 /* InfoPlist.strings */,
 			);
@@ -88,6 +119,10 @@
 			children = (
 				D15DEA4E0ABF63C600CBE3A5 /* enfuseEdit.h */,
 				D15DEA4D0ABF63C600CBE3A5 /* enfuseEdit.m */,
+				1AAE75B90EA452FD00271EA0 /* DBPrefsWindowController.h */,
+				1AAE75BA0EA452FD00271EA0 /* DBPrefsWindowController.m */,
+				1AAE75BB0EA452FD00271EA0 /* enfuseEditPrefsWindowController.h */,
+				1AAE75BC0EA452FD00271EA0 /* enfuseEditPrefsWindowController.m */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -134,6 +169,7 @@
 		D118EB1C0AC08EE7006DD2FE /* Products */ = {
 			isa = PBXGroup;
 			children = (
+				1AAE76280EA4551000271EA0 /* enfuse */,
 				D118EB0F0AC08EAE006DD2FE /* enfuseEdit.ApertureEdit */,
 			);
 			name = Products;
@@ -149,6 +185,7 @@
 				8D5B49AF048680CD000E48DA /* Resources */,
 				8D5B49B1048680CD000E48DA /* Sources */,
 				8D5B49B3048680CD000E48DA /* Frameworks */,
+				1AAE764E0EA4553B00271EA0 /* CopyFiles */,
 				1A6965820E95673C00FE9F6B /* ShellScript */,
 			);
 			buildRules = (
@@ -186,6 +223,10 @@
 				8D5B49B0048680CD000E48DA /* InfoPlist.strings in Resources */,
 				D15DEA520ABF641300CBE3A5 /* enfuseEdit.nib in Resources */,
 				D118EA660AC08CCB006DD2FE /* Localizable.strings in Resources */,
+				1AAE75C20EA4531C00271EA0 /* general.png in Resources */,
+				1AAE75C30EA4531C00271EA0 /* update.tiff in Resources */,
+				1AAE75CB0EA453BE00271EA0 /* Preferences.nib in Resources */,
+				1AAE76290EA4551000271EA0 /* enfuse in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -214,6 +255,8 @@
 			files = (
 				D15DEA4F0ABF63C600CBE3A5 /* enfuseEdit.m in Sources */,
 				1A6965380E95606300FE9F6B /* TaskWrapper.m in Sources */,
+				1AAE75BD0EA452FD00271EA0 /* DBPrefsWindowController.m in Sources */,
+				1AAE75BE0EA452FD00271EA0 /* enfuseEditPrefsWindowController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -226,6 +269,14 @@
 				089C167EFE841241C02AAC07 /* English */,
 			);
 			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		1AAE75C50EA453BE00271EA0 /* Preferences.nib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				1AAE75C60EA453BE00271EA0 /* English */,
+			);
+			name = Preferences.nib;
 			sourceTree = "<group>";
 		};
 		D118EA640AC08CCB006DD2FE /* Localizable.strings */ = {
@@ -288,6 +339,7 @@
 		1DEB913F08733D840010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				PREBINDING = NO;

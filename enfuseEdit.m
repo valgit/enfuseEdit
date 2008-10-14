@@ -7,9 +7,10 @@
 //
 
 #import "enfuseEdit.h"
+#import "enfuseEditPrefsWindowController.h"
 
 // Categories : private methods
-@interface enfuseController (Private)
+@interface enfuseEdit (Private)
 
 -(void)setDefaults;
 -(void)getDefaults;
@@ -148,7 +149,7 @@
 - (void)beginEditSession
 {
 
-	int index, count = [[_editManager selectedVersionIds] count];
+	int count = [[_editManager selectedVersionIds] count];
 	NSLog(@"%s selected : %d",__PRETTY_FUNCTION__,count);
 	
 #if 0
@@ -192,11 +193,22 @@
 	NSLog(@"%s",__PRETTY_FUNCTION__);
 
 	// add some keywords ...
-	NSArray *version = [NSArray arrayWithObject:versionUniqueId];
+	NSArray *version = [NSArray arrayWithObject:versionUniqueID];
 	NSString *keyword = @"Enfuse";
 	NSArray *keywordHierarchy = [NSArray arrayWithObject:keyword];
 	NSArray *keywords =  [NSArray arrayWithObject:keywordHierarchy];
 	[_editManager addHierarchicalKeywords:keywords toVersions:version];
+	
+	// and some metadata
+	NSDictionary *customMetadata = [NSDictionary dictionaryWithObject:[mContrastSlider stringValue] 
+			forKey:@"Contrast"];
+	[_editManager addCustomMetadata:customMetadata toVersions:version];
+
+	// do some cleanup
+	int count = [[_editManager editableVersionIds]  count];
+	NSLog(@"%s edit count :%d to be removed",__PRETTY_FUNCTION__,count );
+	[_editManager deleteVersions:[_editManager editableVersionIds]];
+	
     [_editManager endEditSession];
 }
 
@@ -343,7 +355,7 @@
 	// Get properties ...
     NSDictionary *properties = [_editManager propertiesWithoutThumbnailForVersion:_versionID];
     //NSLog(@"%s : props are %@", __PRETTY_FUNCTION__, properties);
-	NSString *path = [_editManager pathOfEditableFileForVersion:_versionID];
+	//no valuated NSString *path = [_editManager pathOfEditableFileForVersion:_versionID];
 	NSString *exportName = [[[properties objectForKey:kExportKeyVersionName] retain ] autorelease];
 	//kExportKeyEXIFProperties
 	
@@ -513,7 +525,7 @@
 - (IBAction)openPreferences:(id)sender
 {
 	NSLog(@"%s",__PRETTY_FUNCTION__);
-       // [[MyPrefsWindowController sharedPrefsWindowController] showWindow:nil];
+	[[enfuseEditPrefsWindowController sharedPrefsWindowController] showWindow:nil];
 }
 
 - (IBAction) enfuse: (IBOutlet)sender;
@@ -539,9 +551,10 @@
                    outputfile = [outputfile stringByAppendingPathComponent:@"Pictures"];
 		   NSString *tempString = [[NSProcessInfo processInfo] globallyUniqueString];
       		   outputfile = [outputfile stringByAppendingPathComponent:tempString];
-		   [self setOutputfile:[NSString stringWithFormat:@"%@.%@",tempFilename,@"tiff"]]; // TODO
+		   [self setOutputfile:[NSString stringWithFormat:@"%@.%@",outputfile,@"tiff"]]; // TODO
 		   [args addObject:[self outputfile]]; // TODO
 		   
+		   NSLog(@"%s check edit count :%d",__PRETTY_FUNCTION__,[[_editManager editableVersionIds]  count] );
 		   //int i, count = [[_editManager selectedVersionIds] count];
 		   //NSLog(@"%s adding selected : %d",__PRETTY_FUNCTION__,count);
 		   // Tell Aperture to make an editable version of these images. If this version is already editable, this method won't generate a new version
@@ -575,6 +588,27 @@
 		   
 		   NSLog(@"%s will exec : %@",__PRETTY_FUNCTION__,args);
 
+		   [mProgress setDoubleValue:0.0];
+		   [mProgress setMaxValue:(2+4*count)];
+		   enfuseTask=[[TaskWrapper alloc] initWithController:self arguments:args];
+		   // kick off the process asynchronously
+		   int status = [enfuseTask startProcess];
+		   if (status==0) {
+			   //NSLog(@"%s main thread is :%@",__PRETTY_FUNCTION__,[NSThread currentThread]);
+			 #if 1
+			     // wait for it to finish ...
+			   [enfuseTask waitUntilExit];
+			   
+			   NSLog(@"%s exit run",__PRETTY_FUNCTION__);
+			   [enfuseTask release]; // Don't forget to clean up memory
+			   enfuseTask=nil; // Just in case...
+			   findRunning = NO;
+			#endif
+		   } else {
+			   //NSLog(@"%s can't run",__PRETTY_FUNCTION__);
+			   NSRunAlertPanel (NULL, @"running error", @"OK", NULL, NULL);
+		   }
+		   
 	   }
 }
 
@@ -587,7 +621,8 @@
 {
    if ([output hasPrefix:@"Generating"] || [output hasPrefix:@"Collapsing"]  ||
         [output hasPrefix: @"Loading next image"] || [output hasPrefix: @"Using"] ) {
-        [mProgessIndicator incrementBy:1.0];
+        [mProgress incrementBy:1.0];
+		NSLog(@"%s next",__PRETTY_FUNCTION__);
     } 
 }
 
@@ -602,12 +637,12 @@
     // change the "Sleuth" button to say "Stop"
     //[mRestoreButton setTitle:@"Stop"];
     [mEnfuseButton setEnabled:NO];
-    [mProgress startAnimation:self];
-#ifdef _PROGRESSPANEL_
-		   [[myProgress window] center];
-		   [[myProgress window] makeKeyAndOrderFront:nil]; // nspanel was originally hidden in Interface Builder
-		   [[myProgress window] display];
+#if 0
+		   [[mProgressWindow window] center];
+		   [[mProgressWindow window] makeKeyAndOrderFront:nil]; // nspanel was originally hidden in Interface Builder
+		   [[mProgressWindow window] display];
 #endif
+	   [mProgress startAnimation:self];
 }
 
 // A callback that gets called when a TaskWrapper is completed, allowing us to do any cleanup
@@ -623,9 +658,9 @@
     // change the button's title back for the next search
     //[mEnfuseButton setTitle:@"Enfuse"];
     [mEnfuseButton setEnabled:YES];
-#ifdef _PROGRESSPANEL_
-    [[myProgress window] orderOut:nil];
-#endif
+
+//    [[mProgressWindow window] orderOut:nil];
+
 }
 
 -(NSString*)outputfile;
@@ -651,12 +686,14 @@
         NSUserDefaults *standardUserDefaults = [NSUserDefaults standardUserDefaults];
 
         if (standardUserDefaults) {
+		#if 0
               [standardUserDefaults setObject:[mOuputFile stringValue] forKey:@"outputDirectory"];
               [standardUserDefaults setObject:[mOutFile stringValue] forKey:@"outputFile"];
               [standardUserDefaults setObject:[mAppendTo stringValue] forKey:@"outputAppendTo"];
               [standardUserDefaults setObject:[mOutQuality stringValue] forKey:@"outputQuality"];
               [standardUserDefaults synchronize];
-        }
+        #endif
+		}
 }
 
 // read back the defaults ...
@@ -665,11 +702,13 @@
         NSUserDefaults *standardUserDefaults = [NSUserDefaults standardUserDefaults];
 
         if (standardUserDefaults) {
-              [mOuputFile setStringValue:[standardUserDefaults objectForKey:@"outputDirectory"]];
+              #if 0
+			  [mOuputFile setStringValue:[standardUserDefaults objectForKey:@"outputDirectory"]];
               [mOutFile setStringValue:[standardUserDefaults objectForKey:@"outputFile"]];
               [mAppendTo setStringValue:[standardUserDefaults objectForKey:@"outputAppendTo"]];
               [mOutQuality setStringValue:[standardUserDefaults objectForKey:@"outputQuality"]];
-        }
+        #endif
+		}
 }
 
 @end
