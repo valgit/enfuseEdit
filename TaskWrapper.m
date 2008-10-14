@@ -61,7 +61,7 @@
     self = [super init];
     controller = cont;
     arguments = [args retain];
-    
+    cancel = 0;   
     return self;
 }
 
@@ -136,12 +136,6 @@
    [self stopProcess];
 }
 
-- (void)killTask 
-{ 
-    if ([task isRunning]) { 
-        [self stopProcess]; 
-    } 
-} 
 
 // If the task ends, there is no more data coming through the file handle even when the notification is
 // sent, or the process object is released, then this method is called.
@@ -157,8 +151,8 @@
     // objects as observers in the notification center; this can lead to crashes.
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSFileHandleReadCompletionNotification object: [[task standardOutput] fileHandleForReading]];
     
-    // Make sure the task has actually stopped!
-    [task terminate];
+   // Make sure the task has actually stopped!
+   [task terminate];
 
    while ((data = [[[task standardOutput] fileHandleForReading] availableData]) && [data length])
    {
@@ -170,6 +164,11 @@
    // to the controller.  NSTasks are one-shot (not for reuse), so we might as well be too.
    [controller processFinished:status];
    controller = nil;
+}
+
+- (void) cancelProcess
+{
+	cancel = 1;
 }
 
 // This method is called asynchronously when data is available from the task's file handle.
@@ -185,13 +184,16 @@
         // because -[data bytes] is not necessarily a properly terminated string.
         // -initWithData:encoding: on the other hand checks -[data length]
         [controller appendOutput: [[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease]];
+    // we need to schedule the file handle go read more data in the background again.
+	if (cancel != 1)
+    [[aNotification object] readInBackgroundAndNotify];  
+	else 
+          [self stopProcess];
     } else {
         // We're finished here
-        [self stopProcess];
+        // bad ? [self stopProcess];
     }
     
-    // we need to schedule the file handle go read more data in the background again.
-    [[aNotification object] readInBackgroundAndNotify];  
 }
 
 @end

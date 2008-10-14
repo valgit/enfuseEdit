@@ -67,6 +67,7 @@
     NSTask 			*task;
     id				<TaskWrapperController>controller;
     NSArray			*arguments;
+    int cancel;
 }
 
 // This is the designated initializer - pass in your controller and any task arguments.
@@ -81,6 +82,8 @@
 
 // This method stops the process, stoping asynchronous feedback notifications.
 - (void) stopProcess;
+
+- (void) cancelProcess;
 
 @end
 

@@ -44,7 +44,7 @@
 			<key>className</key>
 			<string>enfuseEdit</string>
 			<key>displayName</key>
-			<string>enfuse Processing</string>
+			<string>Enfuse Processing</string>
 <!-- Do not change this uuid. It should match the group uuid above and will help Aperture identify your plug-in as an Edit plug-in. -->
 			<key>group</key>
 			<string>C4E54D0A-175D-4751-B9FD-308F6105BFB5</string>
