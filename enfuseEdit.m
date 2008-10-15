@@ -9,6 +9,8 @@
 #import "enfuseEdit.h"
 #import "enfuseEditPrefsWindowController.h"
 
+#import "NSFileManager-Extensions.h"
+
 // Categories : private methods
 @interface enfuseEdit (Private)
 
@@ -547,11 +549,23 @@
 		   [args addObject:_enfusePath];
 		   
 		   [args addObject:@"-o"];
+#ifdef 0
 		   NSString *outputfile = NSHomeDirectory();
                    outputfile = [outputfile stringByAppendingPathComponent:@"Pictures"];
 		   NSString *tempString = [[NSProcessInfo processInfo] globallyUniqueString];
       		   outputfile = [outputfile stringByAppendingPathComponent:tempString];
 		   [self setOutputfile:[NSString stringWithFormat:@"%@.%@",outputfile,@"tiff"]]; // TODO
+#else
+		   NSFileManager *fm = [NSFileManager defaultManager];
+		   NSString *outputfile = NSHomeDirectory();
+                   outputfile = [outputfile stringByAppendingPathComponent:@"Pictures"];
+		   NSString *tempString = [[NSProcessInfo processInfo] globallyUniqueString];
+		   outputfile = [ outputfile
+                                stringByAppendingPathComponent:[fm nextUniqueNameUsing:filename
+                                withFormat:@"tiff"
+                                appending:@"_enfused" ]];
+		   [self setOutputfile:outputfile];
+#endif
 		   [args addObject:[self outputfile]]; // TODO
 		   
 		   NSLog(@"%s check edit count :%d",__PRETTY_FUNCTION__,[[_editManager editableVersionIds]  count] );
