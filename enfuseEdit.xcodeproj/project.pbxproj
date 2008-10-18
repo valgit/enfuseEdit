@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		1A6965380E95606300FE9F6B /* TaskWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A6965370E95606300FE9F6B /* TaskWrapper.m */; };
+		1A7354990EA685AB00D82928 /* ImportOptions.nib in Resources */ = {isa = PBXBuildFile; fileRef = 1A7354930EA685AB00D82928 /* ImportOptions.nib */; };
 		1AAE75BD0EA452FD00271EA0 /* DBPrefsWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AAE75BA0EA452FD00271EA0 /* DBPrefsWindowController.m */; };
 		1AAE75BE0EA452FD00271EA0 /* enfuseEditPrefsWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AAE75BC0EA452FD00271EA0 /* enfuseEditPrefsWindowController.m */; };
 		1AAE75C20EA4531C00271EA0 /* general.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AAE75C00EA4531C00271EA0 /* general.png */; };
@@ -43,6 +44,7 @@
 		1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		1A6965360E95606300FE9F6B /* TaskWrapper.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TaskWrapper.h; sourceTree = "<group>"; };
 		1A6965370E95606300FE9F6B /* TaskWrapper.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = TaskWrapper.m; sourceTree = "<group>"; };
+		1A7354940EA685AB00D82928 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/ImportOptions.nib; sourceTree = "<group>"; };
 		1AAE75B90EA452FD00271EA0 /* DBPrefsWindowController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DBPrefsWindowController.h; sourceTree = "<group>"; };
 		1AAE75BA0EA452FD00271EA0 /* DBPrefsWindowController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = DBPrefsWindowController.m; sourceTree = "<group>"; };
 		1AAE75BB0EA452FD00271EA0 /* enfuseEditPrefsWindowController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = enfuseEditPrefsWindowController.h; sourceTree = "<group>"; };
@@ -103,6 +105,7 @@
 		089C167CFE841241C02AAC07 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				1A7354930EA685AB00D82928 /* ImportOptions.nib */,
 				D15DEA500ABF641300CBE3A5 /* enfuseEdit.nib */,
 				8D5B49B7048680CD000E48DA /* Info.plist */,
 				1AAE75C50EA453BE00271EA0 /* Preferences.nib */,
@@ -227,6 +230,7 @@
 				1AAE75C30EA4531C00271EA0 /* update.tiff in Resources */,
 				1AAE75CB0EA453BE00271EA0 /* Preferences.nib in Resources */,
 				1AAE76290EA4551000271EA0 /* enfuse in Resources */,
+				1A7354990EA685AB00D82928 /* ImportOptions.nib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -269,6 +273,14 @@
 				089C167EFE841241C02AAC07 /* English */,
 			);
 			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		1A7354930EA685AB00D82928 /* ImportOptions.nib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				1A7354940EA685AB00D82928 /* English */,
+			);
+			name = ImportOptions.nib;
 			sourceTree = "<group>";
 		};
 		1AAE75C50EA453BE00271EA0 /* Preferences.nib */ = {

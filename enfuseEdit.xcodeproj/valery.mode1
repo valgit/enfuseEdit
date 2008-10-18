@@ -190,7 +190,7 @@
 			<key>Content</key>
 			<dict>
 				<key>PBXProjectModuleGUID</key>
-				<string>1AE323CA0EA0695D00E84B57</string>
+				<string>1A0A13DC0EAA2932004CF9DE</string>
 				<key>PBXProjectModuleLabel</key>
 				<string>enfuseEdit.m</string>
 				<key>PBXSplitModuleInNavigatorKey</key>
@@ -198,16 +198,16 @@
 					<key>Split0</key>
 					<dict>
 						<key>PBXProjectModuleGUID</key>
-						<string>1AE323CB0EA0695D00E84B57</string>
+						<string>1A0A13DD0EAA2932004CF9DE</string>
 						<key>PBXProjectModuleLabel</key>
 						<string>enfuseEdit.m</string>
 						<key>_historyCapacity</key>
 						<integer>0</integer>
 						<key>bookmark</key>
-						<string>1AAE76CE0EA45F3C00271EA0</string>
+						<string>1A0A140A0EAA2ED8004CF9DE</string>
 						<key>history</key>
 						<array>
-							<string>1AD7A2820EA30A56000DD240</string>
+							<string>1A0A13C50EAA25FF004CF9DE</string>
 						</array>
 					</dict>
 					<key>SplitCount</key>
@@ -223,7 +223,7 @@
 				<key>PBXModuleWindowStatusBarHidden2</key>
 				<false/>
 				<key>RubberWindowFrame</key>
-				<string>273 103 1057 690 0 0 1440 878 </string>
+				<string>229 147 1057 690 0 0 1440 878 </string>
 			</dict>
 		</dict>
 	</array>
@@ -411,9 +411,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>1AAE75970EA44F6F00271EA0</string>
+				<string>1A0A13DA0EAA2932004CF9DE</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>1AAE75980EA44F6F00271EA0</string>
+				<string>1A0A13DB0EAA2932004CF9DE</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -547,13 +547,10 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>1AAE76870EA4577400271EA0</string>
-		<string>1CD10A99069EF8BA00B06720</string>
-		<string>1AAE766E0EA4568600271EA0</string>
 		<string>1AEDA16E0E8FEAF6000A34EA</string>
 		<string>1A69656D0E9562BD00FE9F6B</string>
-		<string>1AE323CA0EA0695D00E84B57</string>
 		<string>/Users/valery/Documents/Cocoa/enfuseEdit/enfuseEdit.xcodeproj</string>
+		<string>1A0A13DC0EAA2932004CF9DE</string>
 	</array>
 	<key>WindowString</key>
 	<string>534 465 690 397 0 0 1440 878 </string>
@@ -572,6 +569,8 @@
 					<key>Dock</key>
 					<array>
 						<dict>
+							<key>BecomeActive</key>
+							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
@@ -594,8 +593,6 @@
 							<string>196pt</string>
 						</dict>
 						<dict>
-							<key>BecomeActive</key>
-							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
@@ -635,7 +632,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>1AEDA16E0E8FEAF6000A34EA</string>
-				<string>1AAE759A0EA44F6F00271EA0</string>
+				<string>1A0A13C20EAA25FC004CF9DE</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>
@@ -1005,9 +1002,9 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>1A69656D0E9562BD00FE9F6B</string>
-				<string>1AAE759B0EA44F6F00271EA0</string>
+				<string>1A0A13C30EAA25FC004CF9DE</string>
 				<string>1CD0528B0623707200166675</string>
-				<string>1AAE759C0EA44F6F00271EA0</string>
+				<string>1A0A13C40EAA25FC004CF9DE</string>
 			</array>
 			<key>ToolbarConfiguration</key>
 			<string>xcode.toolbar.config.run</string>

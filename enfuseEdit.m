@@ -524,10 +524,79 @@
         }
 }
 
+- (IBAction)importOptionsSheetOK:(id)sender
+{
+	NSLog(@"%s",__PRETTY_FUNCTION__);
+	[NSApp endSheet:mImportOptionsSheet returnCode: NSOKButton];
+	[mImportOptionsSheet orderOut:nil];
+}
+
+- (IBAction)importOptionsSheetCancel:(id)sender
+{
+	NSLog(@"%s",__PRETTY_FUNCTION__);
+	[NSApp endSheet:mImportOptionsSheet returnCode: NSCancelButton];
+	[mImportOptionsSheet orderOut:nil];
+}
+
+- (void)importOptionssheetDidEnd:(NSWindow *)sheet returnCode:(int)returnCode contextInfo:(void *)contextInfo
+{
+	NSLog(@"%s",__PRETTY_FUNCTION__);
+	if (returnCode == NSOKButton)
+		NSBeep();
+}
+
 - (IBAction)openPreferences:(id)sender
 {
 	NSLog(@"%s",__PRETTY_FUNCTION__);
-	[[enfuseEditPrefsWindowController sharedPrefsWindowController] showWindow:nil];
+	//[[enfuseEditPrefsWindowController sharedPrefsWindowController] showWindow:nil];
+#if 1
+	[NSApp beginSheet: mImportOptionsSheet
+			modalForWindow: _editWindow
+			modalDelegate: self
+			didEndSelector: @selector(importOptionssheetDidEnd: returnCode: contextInfo:)
+			contextInfo:NULL];
+#else
+	NSOpenPanel* oPanel = [NSOpenPanel openPanel];
+	
+	[oPanel setCanChooseDirectories:YES];
+	[oPanel setCanChooseFiles:NO];
+	[oPanel setCanCreateDirectories:YES];
+	[oPanel setAllowsMultipleSelection:NO];
+	[oPanel setAlphaValue:0.95];
+	[oPanel setTitle:@"Select a directory for output"];
+
+	NSString *outputDirectory;
+	NSUserDefaults *standardUserDefaults = [NSUserDefaults standardUserDefaults];
+	if ([standardUserDefaults stringForKey:@"outputDirectory"]) {
+		outputDirectory = [standardUserDefaults stringForKey:@"outputDirectory"];
+        } else {
+		outputDirectory = NSHomeDirectory();
+		outputDirectory = [outputDirectory stringByAppendingPathComponent:@"Pictures"];
+        }
+
+	// Display the dialog.  If the OK button was pressed,
+	// process the files.
+	//      if ( [oPanel runModalForDirectory:nil file:nil types:fileTypes]
+	if ( [oPanel runModalForDirectory:outputDirectory file:nil types:nil]
+		 == NSOKButton )
+	{
+		// Get an array containing the full filenames of all
+		// files and directories selected.
+		NSArray* files = [oPanel filenames];
+		
+		NSString* fileName = [files objectAtIndex:0];
+		NSLog(fileName);
+		//[mOuputFile setStringValue:fileName];
+	
+
+		//if (standardUserDefaults) {
+		//	[standardUserDefaults setObject:fileName forKey:@"outputDirectory"];
+		//	[standardUserDefaults synchronize];
+		//}
+	
+	}
+
+#endif
 }
 
 - (IBAction) enfuse: (IBOutlet)sender;
@@ -535,8 +604,17 @@
 	NSLog(@"%s",__PRETTY_FUNCTION__);
 	if (findRunning) {
 		NSLog(@"already running");
+		NSRunAlertPanel (NSLocalizedString(@"Error",@""),
+				 NSLocalizedString(@"Process already running",nil), NSLocalizedString(@"OK",nil), NULL, NULL);
 		return;
 	   } else {
+			 if ([mAutoAlign state] == NSOnState) {
+				NSLog(@"%s need to autoalign grid : %@, ctrl : %@",__PRETTY_FUNCTION__,[mGridSize stringValue],[mControlPoints stringValue]);
+				NSRunAlertPanel (NSLocalizedString(@"Autoalign Error",@""),
+				 NSLocalizedString(@"NYI",nil), NSLocalizedString(@"OK",nil), NULL, NULL);
+				 return;
+			}
+			
 		   // If the task is still sitting around from the last run, release it
 		   if (enfuseTask!=nil)
 			   [enfuseTask release];
@@ -549,7 +627,7 @@
 		   [args addObject:_enfusePath];
 		   
 		   [args addObject:@"-o"];
-#ifdef 0
+#if 1
 		   NSString *outputfile = NSHomeDirectory();
                    outputfile = [outputfile stringByAppendingPathComponent:@"Pictures"];
 		   NSString *tempString = [[NSProcessInfo processInfo] globallyUniqueString];

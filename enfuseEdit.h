@@ -60,9 +60,19 @@
   IBOutlet NSTextField* mContrastWindowSizeTextField;
   IBOutlet NSTextField* mMinCurvatureTextField;
 
+   // autoalign options
+  IBOutlet NSButton* mAutoAlign;
+  IBOutlet NSButton* mAssumeFisheye;
+  IBOutlet NSButton* mOptimizeFOV;
+  IBOutlet NSTextField* mControlPoints;
+  IBOutlet NSTextField* mGridSize;
+  
+  //
   IBOutlet NSPanel *mProgressWindow;
   IBOutlet NSProgressIndicator *mProgress;
 
+	IBOutlet NSPanel *mImportOptionsSheet;
+	
 	@private
 	NSMutableArray *images;
 
