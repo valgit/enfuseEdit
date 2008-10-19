@@ -17,6 +17,8 @@
 -(void)setDefaults;
 -(void)getDefaults;
 
+-(void)initTempDirectory;
+
 @end
 
 @implementation enfuseEdit
@@ -773,33 +775,57 @@
 @implementation enfuseEdit (Private)
 
 // write back the defaults ...
+// TODO
 -(void)setDefaults;
-{
-        NSUserDefaults *standardUserDefaults = [NSUserDefaults standardUserDefaults];
-
-        if (standardUserDefaults) {
-		#if 0
-              [standardUserDefaults setObject:[mOuputFile stringValue] forKey:@"outputDirectory"];
-              [standardUserDefaults setObject:[mOutFile stringValue] forKey:@"outputFile"];
-              [standardUserDefaults setObject:[mAppendTo stringValue] forKey:@"outputAppendTo"];
-              [standardUserDefaults setObject:[mOutQuality stringValue] forKey:@"outputQuality"];
-              [standardUserDefaults synchronize];
-        #endif
-		}
+{ 
+#if 0
+   			  [_editManager setUserDefaultsValue:[mOuputFile stringValue] forKey@"outputDirectory"];
+         
+              [_editManager setUserDefaultsValue:[mOutFile stringValue] forKey:@"outputFile"];
+              [_editManager setUserDefaultsValue:[mAppendTo stringValue] forKey:@"outputAppendTo"];
+              [_editManager setUserDefaultsValue:[mOutQuality stringValue] forKey:@"outputQuality"];
+#endif       
 }
 
 // read back the defaults ...
+// TODO
 -(void)getDefaults;
 {
-        NSUserDefaults *standardUserDefaults = [NSUserDefaults standardUserDefaults];
-
-        if (standardUserDefaults) {
               #if 0
-			  [mOuputFile setStringValue:[standardUserDefaults objectForKey:@"outputDirectory"]];
-              [mOutFile setStringValue:[standardUserDefaults objectForKey:@"outputFile"]];
-              [mAppendTo setStringValue:[standardUserDefaults objectForKey:@"outputAppendTo"]];
-              [mOutQuality setStringValue:[standardUserDefaults objectForKey:@"outputQuality"]];
+			  
+			  [mOuputFile setStringValue:[_editManager userDefaultsObjectForKey:@"outputDirectory"]];
+              [mOutFile setStringValue:[_editManager userDefaultsObjectForKey:@"outputFile"]];
+              [mAppendTo setStringValue:[_editManager userDefaultsObjectForKey:@"outputAppendTo"]];
+              [mOutQuality setStringValue:[_editManager userDefaultsObjectForKey:@"outputQuality"]];
         #endif
+}
+
+-(void)initTempDirectory
+{
+	// Create our temporary directory
+		NSString *tempDirectoryPath = [[NSString stringWithFormat:@"%@/enfuseEdit/", NSTemporaryDirectory()] retain];
+		
+		// If it doesn't exist, create it
+		NSFileManager *fileManager = [NSFileManager defaultManager];
+		BOOL isDirectory;
+		if (![fileManager fileExistsAtPath:tempDirectoryPath isDirectory:&isDirectory])
+		{
+			[fileManager createDirectoryAtPath:tempDirectoryPath attributes:nil];
+		}
+		else if (isDirectory) // If a folder already exists, empty it.
+		{
+			NSArray *contents = [fileManager directoryContentsAtPath:tempDirectoryPath];
+			int i;
+			for (i = 0; i < [contents count]; i++)
+			{
+				NSString *tempFilePath = [NSString stringWithFormat:@"%@%@", tempDirectoryPath, [contents objectAtIndex:i]];
+				[fileManager removeFileAtPath:tempFilePath handler:nil];
+			}
+		}
+		else // Delete the old file and create a new directory
+		{
+			[fileManager removeFileAtPath:tempDirectoryPath handler:nil];
+			[fileManager createDirectoryAtPath:tempDirectoryPath attributes:nil];
 		}
 }
 

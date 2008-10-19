@@ -204,10 +204,10 @@
 						<key>_historyCapacity</key>
 						<integer>0</integer>
 						<key>bookmark</key>
-						<string>1A0A140A0EAA2ED8004CF9DE</string>
+						<string>1A26106E0EAB784600120E4C</string>
 						<key>history</key>
 						<array>
-							<string>1A0A13C50EAA25FF004CF9DE</string>
+							<string>1A0A140A0EAA2ED8004CF9DE</string>
 						</array>
 					</dict>
 					<key>SplitCount</key>
@@ -260,6 +260,8 @@
 			<key>Layout</key>
 			<array>
 				<dict>
+					<key>BecomeActive</key>
+					<true/>
 					<key>ContentConfiguration</key>
 					<dict>
 						<key>PBXBottomSmartGroupGIDs</key>
@@ -373,8 +375,6 @@
 							<string>0pt</string>
 						</dict>
 						<dict>
-							<key>BecomeActive</key>
-							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
@@ -411,9 +411,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>1A0A13DA0EAA2932004CF9DE</string>
+				<string>1A2610590EAB765E00120E4C</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>1A0A13DB0EAA2932004CF9DE</string>
+				<string>1A26105A0EAB765E00120E4C</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -548,8 +548,8 @@
 	<key>WindowOrderList</key>
 	<array>
 		<string>1AEDA16E0E8FEAF6000A34EA</string>
-		<string>1A69656D0E9562BD00FE9F6B</string>
 		<string>/Users/valery/Documents/Cocoa/enfuseEdit/enfuseEdit.xcodeproj</string>
+		<string>1A69656D0E9562BD00FE9F6B</string>
 		<string>1A0A13DC0EAA2932004CF9DE</string>
 	</array>
 	<key>WindowString</key>
@@ -569,14 +569,12 @@
 					<key>Dock</key>
 					<array>
 						<dict>
-							<key>BecomeActive</key>
-							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
 								<string>1CD0528F0623707200166675</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>enfuseEdit.m</string>
+								<string></string>
 								<key>StatusBarVisibility</key>
 								<true/>
 							</dict>
@@ -632,7 +630,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>1AEDA16E0E8FEAF6000A34EA</string>
-				<string>1A0A13C20EAA25FC004CF9DE</string>
+				<string>1A2610650EAB76DC00120E4C</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>
@@ -1002,9 +1000,9 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>1A69656D0E9562BD00FE9F6B</string>
-				<string>1A0A13C30EAA25FC004CF9DE</string>
+				<string>1A26105C0EAB765E00120E4C</string>
 				<string>1CD0528B0623707200166675</string>
-				<string>1A0A13C40EAA25FC004CF9DE</string>
+				<string>1A26105D0EAB765E00120E4C</string>
 			</array>
 			<key>ToolbarConfiguration</key>
 			<string>xcode.toolbar.config.run</string>
