@@ -12,6 +12,7 @@
 #import "ApertureEditManager.h"
 
 #import "TaskWrapper.h"
+#import "ExportOptionsController.h"
 
 @interface enfuseEdit : NSObject <ApertureEditPlugIn>
 {
@@ -68,10 +69,10 @@
   IBOutlet NSTextField* mGridSize;
   
   //
-  IBOutlet NSPanel *mProgressWindow;
-  IBOutlet NSProgressIndicator *mProgress;
+  IBOutlet NSProgressIndicator *mProgressIndicator;
+  IBOutlet NSTextField *mProgressText;
 
-	IBOutlet NSPanel *mImportOptionsSheet;
+	 IBOutlet ExportOptionsController* exportOptionsSheetController;
 	
 	@private
 	NSMutableArray *images;
@@ -85,7 +86,10 @@
   BOOL findRunning;
   TaskWrapper *enfuseTask;
 
-  NSString* _outputfile;
+      NSString* _outputfile;
+    NSString* _tmpfile;
+    NSString* _tmppath;
+
 }
 
 - (IBAction)_cancelEditing:(id)sender;

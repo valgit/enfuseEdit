@@ -7,7 +7,6 @@
 //
 
 #import "enfuseEdit.h"
-#import "enfuseEditPrefsWindowController.h"
 
 #import "NSFileManager-Extensions.h"
 
@@ -526,79 +525,33 @@
         }
 }
 
-- (IBAction)importOptionsSheetOK:(id)sender
+- (IBAction)preferencesSaving:(id)sender;
 {
 	NSLog(@"%s",__PRETTY_FUNCTION__);
-	[NSApp endSheet:mImportOptionsSheet returnCode: NSOKButton];
-	[mImportOptionsSheet orderOut:nil];
-}
-
-- (IBAction)importOptionsSheetCancel:(id)sender
-{
-	NSLog(@"%s",__PRETTY_FUNCTION__);
-	[NSApp endSheet:mImportOptionsSheet returnCode: NSCancelButton];
-	[mImportOptionsSheet orderOut:nil];
-}
-
-- (void)importOptionssheetDidEnd:(NSWindow *)sheet returnCode:(int)returnCode contextInfo:(void *)contextInfo
-{
-	NSLog(@"%s",__PRETTY_FUNCTION__);
-	if (returnCode == NSOKButton)
-		NSBeep();
+	
+//	[options setAddKeyword:[exportOptionsSheetController AddKeyword]];
+//	[options setImportInAperture:[exportOptionsSheetController ImportInAperture]];
+//	[options setStackWithOriginal:[exportOptionsSheetController stackWithOriginal]];
+//	if ([options addKeyword] == YES)
+//		[options setKeyword:[exportOptionsSheetController keyword]];
+//	else 
+//		[options setKeyword:nil];
 }
 
 - (IBAction)openPreferences:(id)sender
 {
 	NSLog(@"%s",__PRETTY_FUNCTION__);
-	//[[enfuseEditPrefsWindowController sharedPrefsWindowController] showWindow:nil];
-#if 1
-	[NSApp beginSheet: mImportOptionsSheet
-			modalForWindow: _editWindow
-			modalDelegate: self
-			didEndSelector: @selector(importOptionssheetDidEnd: returnCode: contextInfo:)
-			contextInfo:NULL];
-#else
-	NSOpenPanel* oPanel = [NSOpenPanel openPanel];
 	
-	[oPanel setCanChooseDirectories:YES];
-	[oPanel setCanChooseFiles:NO];
-	[oPanel setCanCreateDirectories:YES];
-	[oPanel setAllowsMultipleSelection:NO];
-	[oPanel setAlphaValue:0.95];
-	[oPanel setTitle:@"Select a directory for output"];
+	if (exportOptionsSheetController == nil) 
+		exportOptionsSheetController = [[ExportOptionsController alloc] init ];
 
-	NSString *outputDirectory;
-	NSUserDefaults *standardUserDefaults = [NSUserDefaults standardUserDefaults];
-	if ([standardUserDefaults stringForKey:@"outputDirectory"]) {
-		outputDirectory = [standardUserDefaults stringForKey:@"outputDirectory"];
-        } else {
-		outputDirectory = NSHomeDirectory();
-		outputDirectory = [outputDirectory stringByAppendingPathComponent:@"Pictures"];
-        }
-
-	// Display the dialog.  If the OK button was pressed,
-	// process the files.
-	//      if ( [oPanel runModalForDirectory:nil file:nil types:fileTypes]
-	if ( [oPanel runModalForDirectory:outputDirectory file:nil types:nil]
-		 == NSOKButton )
-	{
-		// Get an array containing the full filenames of all
-		// files and directories selected.
-		NSArray* files = [oPanel filenames];
+//    [exportOptionsSheetController setImportInAperture:[options importInAperture]];
+//	[exportOptionsSheetController setAddKeyword:[options addKeyword]];
+//	[exportOptionsSheetController stackWithOriginal:[options stackWithOriginal]];
+//	if ([options addKeyword])
+//		[exportOptionsSheetController setKeyword:[options keyword]];
 		
-		NSString* fileName = [files objectAtIndex:0];
-		NSLog(fileName);
-		//[mOuputFile setStringValue:fileName];
-	
-
-		//if (standardUserDefaults) {
-		//	[standardUserDefaults setObject:fileName forKey:@"outputDirectory"];
-		//	[standardUserDefaults synchronize];
-		//}
-	
-	}
-
-#endif
+	[exportOptionsSheetController runSheet:[_editManager apertureWindow] selector:@selector(preferencesSaving:) target:self];
 }
 
 - (IBAction) enfuse: (IBOutlet)sender;
@@ -682,8 +635,8 @@
 		   
 		   NSLog(@"%s will exec : %@",__PRETTY_FUNCTION__,args);
 
-		   [mProgress setDoubleValue:0.0];
-		   [mProgress setMaxValue:(2+4*count)];
+		   [mProgressIndicator setDoubleValue:0.0];
+		   [mProgressIndicator setMaxValue:(2+4*count)];
 		   enfuseTask=[[TaskWrapper alloc] initWithController:self arguments:args];
 		   // kick off the process asynchronously
 		   int status = [enfuseTask startProcess];
@@ -715,7 +668,7 @@
 {
    if ([output hasPrefix:@"Generating"] || [output hasPrefix:@"Collapsing"]  ||
         [output hasPrefix: @"Loading next image"] || [output hasPrefix: @"Using"] ) {
-        [mProgress incrementBy:1.0];
+        [mProgressIndicator incrementBy:1.0];
 		NSLog(@"%s next",__PRETTY_FUNCTION__);
     } 
 }
@@ -736,7 +689,7 @@
 		   [[mProgressWindow window] makeKeyAndOrderFront:nil]; // nspanel was originally hidden in Interface Builder
 		   [[mProgressWindow window] display];
 #endif
-	   [mProgress startAnimation:self];
+	   [mProgressIndicator startAnimation:self];
 }
 
 // A callback that gets called when a TaskWrapper is completed, allowing us to do any cleanup
@@ -744,8 +697,8 @@
 // to the ProcessController protocol.
 - (void)processFinished:(int)status
 {
-    [mProgress stopAnimation:self];
-    [mProgress setDoubleValue:0];
+    [mProgressIndicator stopAnimation:self];
+    [mProgressIndicator setDoubleValue:0];
 
 	NSLog(@"%s status is : %d",__PRETTY_FUNCTION__,status);
     findRunning=NO;
