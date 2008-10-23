@@ -12,6 +12,7 @@
 		1A2E93480EB10B6B0080069D /* ExportOptionsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A2E93440EB10B6B0080069D /* ExportOptionsController.m */; };
 		1A2E93490EB10B6B0080069D /* TaskProgressInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A2E93450EB10B6B0080069D /* TaskProgressInfo.m */; };
 		1A2E934A0EB10B6B0080069D /* TaskProgressInfo.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 1A2E93460EB10B6B0080069D /* TaskProgressInfo.h */; };
+		1A2E939E0EB111D10080069D /* CollapsibleBoxFramework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A2E93970EB111D10080069D /* CollapsibleBoxFramework.framework */; };
 		1A6965380E95606300FE9F6B /* TaskWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A6965370E95606300FE9F6B /* TaskWrapper.m */; };
 		1AAE75C20EA4531C00271EA0 /* general.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AAE75C00EA4531C00271EA0 /* general.png */; };
 		1AAE75C30EA4531C00271EA0 /* update.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 1AAE75C10EA4531C00271EA0 /* update.tiff */; };
@@ -50,6 +51,7 @@
 		1A2E93440EB10B6B0080069D /* ExportOptionsController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = ExportOptionsController.m; sourceTree = "<group>"; };
 		1A2E93450EB10B6B0080069D /* TaskProgressInfo.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = TaskProgressInfo.m; sourceTree = "<group>"; };
 		1A2E93460EB10B6B0080069D /* TaskProgressInfo.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TaskProgressInfo.h; sourceTree = "<group>"; };
+		1A2E93970EB111D10080069D /* CollapsibleBoxFramework.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CollapsibleBoxFramework.framework; sourceTree = "<group>"; };
 		1A6965360E95606300FE9F6B /* TaskWrapper.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TaskWrapper.h; sourceTree = "<group>"; };
 		1A6965370E95606300FE9F6B /* TaskWrapper.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = TaskWrapper.m; sourceTree = "<group>"; };
 		1AAE75C00EA4531C00271EA0 /* general.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = general.png; sourceTree = "<group>"; };
@@ -76,6 +78,7 @@
 			files = (
 				8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */,
 				D15DEA4A0ABF639500CBE3A5 /* PluginManager.framework in Frameworks */,
+				1A2E939E0EB111D10080069D /* CollapsibleBoxFramework.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -134,6 +137,7 @@
 		1058C7ACFEA557BF11CA2CBB /* Linked Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				1A2E93970EB111D10080069D /* CollapsibleBoxFramework.framework */,
 				D15DEA490ABF639500CBE3A5 /* PluginManager.framework */,
 				1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */,
 			);
@@ -307,6 +311,11 @@
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 				DSTROOT = /;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",
+				);
+				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)\"";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
@@ -329,6 +338,11 @@
 					i386,
 				);
 				DSTROOT = /;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",
+				);
+				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)\"";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
