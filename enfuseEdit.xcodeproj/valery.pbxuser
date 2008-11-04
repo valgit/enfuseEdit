@@ -95,11 +95,13 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 247518764;
-			PBXWorkspaceStateSaveDate = 247518764;
+			PBXPerProjectTemplateStateSaveDate = 247522286;
+			PBXWorkspaceStateSaveDate = 247522286;
 		};
 		perUserProjectItems = {
-			1AAA68F60EC0DE5600B13946 /* PBXBookmark */ = 1AAA68F60EC0DE5600B13946 /* PBXBookmark */;
+			1AA6FAA90EC0E5E100752C01 /* PBXTextBookmark */ = 1AA6FAA90EC0E5E100752C01 /* PBXTextBookmark */;
+			1AA6FAAC0EC0E5E100752C01 /* PBXTextBookmark */ = 1AA6FAAC0EC0E5E100752C01 /* PBXTextBookmark */;
+			1AA6FAAE0EC0E5E100752C01 /* PBXTextBookmark */ = 1AA6FAAE0EC0E5E100752C01 /* PBXTextBookmark */;
 			1AAA68FD0EC0E35D00B13946 /* PBXTextBookmark */ = 1AAA68FD0EC0E35D00B13946 /* PBXTextBookmark */;
 		};
 		sourceControlManager = 1AEDA15C0E8FE94E000A34EA /* Source Control */;
@@ -163,16 +165,58 @@
 		path = /Applications/Aperture.app;
 		sourceTree = "<absolute>";
 	};
-	1AAA68F60EC0DE5600B13946 /* PBXBookmark */ = {
-		isa = PBXBookmark;
+	1AA6FAA90EC0E5E100752C01 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
 		fRef = D15DEA4D0ABF63C600CBE3A5 /* enfuseEdit.m */;
+		name = "enfuseEdit.m: 314";
+		rLen = 0;
+		rLoc = 9701;
+		rType = 0;
+		vrLen = 1362;
+		vrLoc = 10122;
+	};
+	1AA6FAAC0EC0E5E100752C01 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1AA6FAAD0EC0E5E100752C01 /* enfuseController.m */;
+		rLen = 0;
+		rLoc = 2147483647;
+		rType = 0;
+	};
+	1AA6FAAD0EC0E5E100752C01 /* enfuseController.m */ = {
+		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.c.objc;
+		name = enfuseController.m;
+		path = /Users/valery/Documents/Cocoa/enfuseGUI/enfuseController.m;
+		sourceTree = "<absolute>";
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1118, 20762}}";
+			sepNavSelRange = "{6759, 895}";
+			sepNavVisRect = "{{0, 3203}, {1018, 617}}";
+			sepNavWindowFrame = "{{58, 127}, {1057, 746}}";
+		};
+	};
+	1AA6FAAE0EC0E5E100752C01 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1AA6FAAF0EC0E5E100752C01 /* enfuseController.m */;
+		name = "(null): 236";
+		rLen = 895;
+		rLoc = 6759;
+		rType = 0;
+		vrLen = 1314;
+		vrLoc = 6653;
+	};
+	1AA6FAAF0EC0E5E100752C01 /* enfuseController.m */ = {
+		isa = PBXFileReference;
+		name = enfuseController.m;
+		path = /Users/valery/Documents/Cocoa/enfuseGUI/enfuseController.m;
+		sourceTree = "<absolute>";
 	};
 	1AAA68FD0EC0E35D00B13946 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = D15DEA4D0ABF63C600CBE3A5 /* enfuseEdit.m */;
 		name = "enfuseEdit.m: 1051";
 		rLen = 0;
-		rLoc = 38112;
+		rLoc = 38210;
 		rType = 0;
 		vrLen = 1456;
 		vrLoc = 37092;
@@ -218,9 +262,9 @@
 	};
 	D15DEA4D0ABF63C600CBE3A5 /* enfuseEdit.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1148, 16702}}";
-			sepNavSelRange = "{38112, 0}";
-			sepNavVisRect = "{{0, 14320}, {1018, 617}}";
+			sepNavIntBoundsRect = "{{0, 0}, {1148, 17164}}";
+			sepNavSelRange = "{9701, 0}";
+			sepNavVisRect = "{{0, 4574}, {1018, 617}}";
 			sepNavWindowFrame = "{{228, 92}, {1057, 746}}";
 		};
 	};

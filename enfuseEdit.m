@@ -18,6 +18,7 @@
 -(void)getDefaults;
 
 -(NSString *)initTempDirectory;
+-(void)cleanuptempdir;
 
 @end
 
@@ -245,6 +246,8 @@ int count = [[_editManager editableVersionIds]  count];
 NSLog(@"%s edit count :%d to be removed",__PRETTY_FUNCTION__,count );
 [_editManager deleteVersions:[_editManager editableVersionIds]];
 
+[self cleanuptempdir];
+
 [_editManager endEditSession];
 }
 
@@ -252,6 +255,9 @@ NSLog(@"%s edit count :%d to be removed",__PRETTY_FUNCTION__,count );
 {
 	NSLog(@"%s",__PRETTY_FUNCTION__);
 	// should we display something here ?
+	
+	[self cleanuptempdir];
+	
 	// Tell Aperture to cancel
 	[_editManager cancelEditSession];
 }
@@ -270,6 +276,8 @@ NSLog(@"%s edit count :%d to be removed",__PRETTY_FUNCTION__,count );
 	}
 	// maybe we should to some cleanup ?
 	//- (void)deleteVersions:(NSArray *)versionUniqueIDs;
+	
+	[self cleanuptempdir];
 	
 	// Tell Aperture to cancel
 	[_editManager cancelEditSession];
@@ -302,6 +310,8 @@ NSLog(@"%s edit count :%d to be removed",__PRETTY_FUNCTION__,count );
 		
 	} else {
 		NSLog(@"%s can't import !",__PRETTY_FUNCTION__);
+		[self cleanuptempdir];
+		
 		// should we display something here ?
 		[_editManager endEditSession];
 	}
@@ -717,16 +727,16 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
 	// create the output file name  kExportKeyReferencedMasterPath kExportKeyVersionName
 	//
 	NSString *filename;
-	#if 0
+#if 0
 	file = [images objectAtIndex:0];
 	if (file != nil) {
 		filename = [[file valueForKey:@"file"] lastPathComponent ]; 
 	} else {
 		filename = @"enfused";
 	}
-	#else
+#else
 	filename = @"enfused";
-	#endif
+#endif
 	
 	// TODO [[mInputFile stringValue] lastPathComponent];
 	//NSString *extension = [[filename pathExtension] lowercaseString];
@@ -750,34 +760,34 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
 													NSLog(@"bad selected tag is %d",[[mOutputType selectedCell] tag]);
 	}
 
-	[self setOutputfile:outputfile];	
+[self setOutputfile:outputfile];	
 
-	// 
-	// create the enfuse task
-	if (enfusetask != nil) {
-		NSLog(@"%s need to enfuse task",__PRETTY_FUNCTION__);
+// 
+// create the enfuse task
+if (enfusetask != nil) {
+	NSLog(@"%s need to enfuse task",__PRETTY_FUNCTION__);
 				[enfusetask release];
 				enfusetask = nil;
-	}
+}
 
-	enfusetask = [[enfuseTask alloc] init];
+enfusetask = [[enfuseTask alloc] init];
 
-	// temporary file for output
-	[enfusetask setOutputfile:[[NSFileManager defaultManager] tempfilename:@"tiff" /*[[mOutFormat titleOfSelectedItem] lowercaseString]*/]];
+// temporary file for output
+[enfusetask setOutputfile:[[NSFileManager defaultManager] tempfilename:@"tiff" /*[[mOutFormat titleOfSelectedItem] lowercaseString]*/]];
 
-	// TODO : check if align_image was run ...
-	if ([mAutoAlign state] == NSOnState) {
-		NSLog(@"%s autoalign was run, get align data",__PRETTY_FUNCTION__);
-		// put filenames and full pathnames into the file array
-		NSEnumerator *enumerator = [[[NSFileManager defaultManager] directoryContentsAtPath: [self temppath] ] objectEnumerator];
-		while (nil != (filename = [enumerator nextObject])) {
-			//NSLog(@"file : %@",[filename lastPathComponent]);
-			if ([[filename lastPathComponent] hasPrefix:@"align"]) {				
-				[enfusetask addFile:[NSString stringWithFormat:@"%@/%@",[self temppath],filename]];
-			}
+// TODO : check if align_image was run ...
+if ([mAutoAlign state] == NSOnState) {
+	NSLog(@"%s autoalign was run, get align data",__PRETTY_FUNCTION__);
+	// put filenames and full pathnames into the file array
+	NSEnumerator *enumerator = [[[NSFileManager defaultManager] directoryContentsAtPath: [self temppath] ] objectEnumerator];
+	while (nil != (filename = [enumerator nextObject])) {
+		//NSLog(@"file : %@",[filename lastPathComponent]);
+		if ([[filename lastPathComponent] hasPrefix:@"align"]) {				
+			[enfusetask addFile:[NSString stringWithFormat:@"%@/%@",[self temppath],filename]];
 		}
+	}
 	
-	} else {
+} else {
 	
 	NSLog(@"%s check edit count :%d",__PRETTY_FUNCTION__,[[_editManager editableVersionIds]  count] );
 	//int i, count = [[_editManager selectedVersionIds] count];
@@ -806,8 +816,8 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
 		[pool release];
 		}
 	}
-	
-					
+
+
 #if 0
 // TODO : check the preferences ...
 if ([[mOutFormat titleOfSelectedItem] isEqualToString:@"JPEG"] ) {
@@ -816,7 +826,7 @@ if ([[mOutFormat titleOfSelectedItem] isEqualToString:@"JPEG"] ) {
 	[enfusetask addArg:@"--compression=LZW"]; // if jpeg !
 }
 #else
-	[enfusetask addArg:@"--compression=LZW"];
+[enfusetask addArg:@"--compression=LZW"];
 #endif
 
 [enfusetask addArg:[NSString stringWithFormat:@"--wExposure=%@",[mExposureSlider stringValue]]];
@@ -1188,5 +1198,28 @@ for (i = 0; i < count; i++) {
 #endif
 }
 
+-(void)cleanuptempdir;
+{
+	NSFileManager *defaultManager = [NSFileManager defaultManager];
+	NSLog(@"%s",__PRETTY_FUNCTION__);
+	//NSData* data = [self dataOfType:@"xml"];
+	//[data writeToFile:@"/tmp/test.xml" atomically:YES ];
+	NSDictionary* obj=nil;
+	NSEnumerator *enumerator = [images objectEnumerator];
+	
+	while ( nil != (obj = [enumerator nextObject]) ) {
+		//NSLog(@"removing : %@",[obj valueForKey:@"thumbfile"]);		
+		[defaultManager removeFileAtPath:[obj valueForKey:@"thumbfile"] handler:self];
+	}	
+	NSString *filename;
+	enumerator = [[defaultManager directoryContentsAtPath: [self temppath] ] objectEnumerator];
+	while (nil != (filename = [enumerator nextObject]) ) {
+		//NSLog(@"file : %@",[filename lastPathComponent]);
+		if ([[filename lastPathComponent] hasPrefix:@"align"]) {				
+			[defaultManager removeFileAtPath:[NSString stringWithFormat:@"%@/%@",[self temppath],filename] handler:self];
+		}
+	}
+	
+}
 
 @end
