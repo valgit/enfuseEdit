@@ -204,10 +204,10 @@
 						<key>_historyCapacity</key>
 						<integer>0</integer>
 						<key>bookmark</key>
-						<string>1AA6FAA90EC0E5E100752C01</string>
+						<string>1AACDFE20EC1017E00DB5E79</string>
 						<key>history</key>
 						<array>
-							<string>1AAA68FD0EC0E35D00B13946</string>
+							<string>1AA6FAA90EC0E5E100752C01</string>
 						</array>
 					</dict>
 					<key>SplitCount</key>
@@ -224,46 +224,6 @@
 				<false/>
 				<key>RubberWindowFrame</key>
 				<string>228 148 1057 690 0 0 1440 878 </string>
-			</dict>
-		</dict>
-		<dict>
-			<key>Content</key>
-			<dict>
-				<key>PBXProjectModuleGUID</key>
-				<string>1AA6FAAA0EC0E5E100752C01</string>
-				<key>PBXProjectModuleLabel</key>
-				<string>enfuseController.m</string>
-				<key>PBXSplitModuleInNavigatorKey</key>
-				<dict>
-					<key>Split0</key>
-					<dict>
-						<key>PBXProjectModuleGUID</key>
-						<string>1AA6FAAB0EC0E5E100752C01</string>
-						<key>PBXProjectModuleLabel</key>
-						<string>enfuseController.m</string>
-						<key>_historyCapacity</key>
-						<integer>0</integer>
-						<key>bookmark</key>
-						<string>1AA6FAAE0EC0E5E100752C01</string>
-						<key>history</key>
-						<array>
-							<string>1AA6FAAC0EC0E5E100752C01</string>
-						</array>
-					</dict>
-					<key>SplitCount</key>
-					<string>1</string>
-				</dict>
-				<key>StatusBarVisibility</key>
-				<true/>
-			</dict>
-			<key>Geometry</key>
-			<dict>
-				<key>Frame</key>
-				<string>{{0, 20}, {1057, 649}}</string>
-				<key>PBXModuleWindowStatusBarHidden2</key>
-				<false/>
-				<key>RubberWindowFrame</key>
-				<string>58 183 1057 690 0 0 1440 878 </string>
 			</dict>
 		</dict>
 	</array>
@@ -300,8 +260,6 @@
 			<key>Layout</key>
 			<array>
 				<dict>
-					<key>BecomeActive</key>
-					<true/>
 					<key>ContentConfiguration</key>
 					<dict>
 						<key>PBXBottomSmartGroupGIDs</key>
@@ -414,6 +372,8 @@
 							<string>0pt</string>
 						</dict>
 						<dict>
+							<key>BecomeActive</key>
+							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
@@ -450,9 +410,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>1AA6FAA00EC0E3FF00752C01</string>
+				<string>1AACDFD80EC0FDEC00DB5E79</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>1AA6FAA10EC0E3FF00752C01</string>
+				<string>1AACDFD90EC0FDEC00DB5E79</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -588,9 +548,8 @@
 	<array>
 		<string>1AEDA16E0E8FEAF6000A34EA</string>
 		<string>/Users/valery/Documents/Cocoa/enfuseEdit/enfuseEdit.xcodeproj</string>
-		<string>1A69656D0E9562BD00FE9F6B</string>
-		<string>1AA6FAAA0EC0E5E100752C01</string>
 		<string>1AAA68FB0EC0E35D00B13946</string>
+		<string>1A69656D0E9562BD00FE9F6B</string>
 	</array>
 	<key>WindowString</key>
 	<string>534 465 690 397 0 0 1440 878 </string>
@@ -670,7 +629,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>1AEDA16E0E8FEAF6000A34EA</string>
-				<string>1AA6FAB00EC0E5E100752C01</string>
+				<string>1AACDFE10EC1005700DB5E79</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>
@@ -1040,9 +999,9 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>1A69656D0E9562BD00FE9F6B</string>
-				<string>1AA6FAA30EC0E3FF00752C01</string>
+				<string>1AACDFDB0EC0FDEC00DB5E79</string>
 				<string>1CD0528B0623707200166675</string>
-				<string>1AA6FAA40EC0E3FF00752C01</string>
+				<string>1AACDFDC0EC0FDEC00DB5E79</string>
 			</array>
 			<key>ToolbarConfiguration</key>
 			<string>xcode.toolbar.config.run</string>

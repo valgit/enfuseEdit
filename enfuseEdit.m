@@ -556,7 +556,7 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
 	[mMuSlider setFloatValue:theValue];
 }
 
-- (IBAction) openPresets: (IBOutlet)sender;
+- (IBAction) openPresets: (id)sender;
 {
 	// - (id)userDefaultsObjectForKey:(NSString *)key;
 	
@@ -573,7 +573,7 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
 	}
 }
 
-- (IBAction) savePresets: (IBOutlet)sender;
+- (IBAction) savePresets: (id)sender;
 {
 	// - (void)setUserDefaultsValue:(id)value forKey:(NSString *)key;
 	
@@ -641,7 +641,7 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
 		  [exportOptionsSheetController runSheet:[_editManager apertureWindow] selector:@selector(preferencesSaving:) target:self];
 }
 
-- (IBAction) enfuse: (IBOutlet)sender;
+- (IBAction) enfuse: (id)sender;
 {
 	NSLog(@"%s",__PRETTY_FUNCTION__);
 	if (findRunning) {
@@ -750,14 +750,14 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
 																							 withFormat:@"tiff" /*[[mOutFormat titleOfSelectedItem] lowercaseString]*/
 																							  appending:[mAppendTo stringValue] ]];
 				break;
-											 case 1: /* append */
+		case 1: /* append */
 				outputfile = [ [useroptions valueForKey:@"exportDirectory"] /*[mOuputFile stringValue]*/
 						 stringByAppendingPathComponent:[[NSFileManager defaultManager] nextUniqueNameUsing:filename
 																								 withFormat:@"tiff" /*[[mOutFormat titleOfSelectedItem] lowercaseString]*/
 																								  appending:[mAppendTo stringValue] ]];
 					break;
-												default:
-													NSLog(@"bad selected tag is %d",[[mOutputType selectedCell] tag]);
+		default:
+				NSLog(@"bad selected tag is %d",[[mOutputType selectedCell] tag]);
 	}
 
 [self setOutputfile:outputfile];	
