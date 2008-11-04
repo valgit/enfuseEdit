@@ -18,6 +18,7 @@
 		7111D3F40EC084FF006D679B /* NSFileManager-Extensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 7111D3F20EC084FF006D679B /* NSFileManager-Extensions.m */; };
 		7111D4500EC087E7006D679B /* alignStackTask.m in Sources */ = {isa = PBXBuildFile; fileRef = 7111D3560EC07E6D006D679B /* alignStackTask.m */; };
 		7111D4520EC0880B006D679B /* enfuseTask.m in Sources */ = {isa = PBXBuildFile; fileRef = 7111D3570EC07E6D006D679B /* enfuseTask.m */; };
+		717C7DB50EC0928F00340889 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 717C7DB40EC0928F00340889 /* QuartzCore.framework */; };
 		8D5B49B0048680CD000E48DA /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C167DFE841241C02AAC07 /* InfoPlist.strings */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
 		D118EA660AC08CCB006DD2FE /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = D118EA640AC08CCB006DD2FE /* Localizable.strings */; };
@@ -64,6 +65,7 @@
 		7111D3600EC07F19006D679B /* ExportOptionsController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = ExportOptionsController.m; sourceTree = "<group>"; };
 		7111D3F10EC084FF006D679B /* NSFileManager-Extensions.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = "NSFileManager-Extensions.h"; sourceTree = "<group>"; };
 		7111D3F20EC084FF006D679B /* NSFileManager-Extensions.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = "NSFileManager-Extensions.m"; sourceTree = "<group>"; };
+		717C7DB40EC0928F00340889 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = /System/Library/Frameworks/QuartzCore.framework; sourceTree = "<absolute>"; };
 		8D5B49B7048680CD000E48DA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Info.plist; sourceTree = "<group>"; };
 		D118EA650AC08CCB006DD2FE /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/Localizable.strings; sourceTree = "<group>"; };
 		D118EB0F0AC08EAE006DD2FE /* enfuseEdit.ApertureEdit */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = enfuseEdit.ApertureEdit; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -81,6 +83,7 @@
 			files = (
 				8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */,
 				D15DEA4A0ABF639500CBE3A5 /* PluginManager.framework in Frameworks */,
+				717C7DB50EC0928F00340889 /* QuartzCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -145,6 +148,7 @@
 		1058C7ACFEA557BF11CA2CBB /* Linked Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				717C7DB40EC0928F00340889 /* QuartzCore.framework */,
 				D15DEA490ABF639500CBE3A5 /* PluginManager.framework */,
 				1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */,
 			);
