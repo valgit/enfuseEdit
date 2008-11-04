@@ -9,6 +9,7 @@
 #import "enfuseEdit.h"
 
 #import "NSFileManager-Extensions.h"
+#import "TaskProgressInfo.h"
 
 // Categories : private methods
 @interface enfuseEdit (Private)
@@ -16,7 +17,7 @@
 -(void)setDefaults;
 -(void)getDefaults;
 
--(void)initTempDirectory;
+-(NSString *)initTempDirectory;
 
 @end
 
@@ -50,7 +51,12 @@
 		_cacheImagesInfos = [[NSMutableDictionary alloc] init];
 		// task ...
 		findRunning=NO;
-		enfuseTask=nil;
+		
+		//enfuseTask=nil;
+		aligntask = nil;
+		
+		useroptions = [[NSMutableDictionary alloc] initWithCapacity:5];
+		[self setTempPath:[self initTempDirectory]];
 	}
 	
 	return self;
@@ -59,7 +65,19 @@
 - (void)dealloc
 {
 	[images release];
-
+	
+	if (aligntask != nil)
+		[aligntask release];
+	
+	if (enfusetask != nil)
+		[enfusetask release];
+	
+	if (exportOptionsSheetController != nil)
+		[exportOptionsSheetController release];
+	
+	if (useroptions != nil)
+		[useroptions dealloc];
+	
 	// Release the top-level objects from the nib.
 	[_topLevelNibObjects makeObjectsPerformSelector:@selector(release)];
 	[_topLevelNibObjects release];
@@ -91,19 +109,7 @@
 	NSLog(@"%s",__PRETTY_FUNCTION__);
 	
     findRunning=NO;
-    enfuseTask=nil;
-#if 0
-	NSString *path = [NSString stringWithFormat:@"%@%@",[[NSBundle mainBundle] bundlePath],
-		/*@"/greycstoration.app/Contents/MacOS/greycstoration"*/
-		@"/enfuse/enfuse"];
-	
-	// check for enfuse binaries...
-	if([[NSFileManager defaultManager] isExecutableFileAtPath:path]==NO){
-		NSString *alert = [path stringByAppendingString: @" is not executable!"];
-		NSRunAlertPanel (NULL, alert, @"OK", NULL, NULL);
-	}
-#endif
-	
+    	
 	[_editWindow center];
 //	[window makeKeyAndOrderFront:nil];
 	
@@ -135,11 +141,34 @@
 		[myNib release];
 
 	//NSBundle *myBundle = [NSBundle bundleForClass:[self class]];
-	_enfusePath = [[NSString stringWithFormat:@"%@%@",[[myBundle infoDictionary] objectForKey:@"NSBundleResolvedPath"],
-		@"/Contents/MacOS/enfuse"] retain];
+	//_enfusePath = [[NSString stringWithFormat:@"%@%@",[[myBundle infoDictionary] objectForKey:@"NSBundleResolvedPath"],
+	//	@"/Contents/MacOS/enfuse"] retain];
 
-	NSLog(@"%s path is : %@",__PRETTY_FUNCTION__,_enfusePath);
+	//NSLog(@"%s path is : %@",__PRETTY_FUNCTION__,_enfusePath);
 	
+	#if 1 // not quit good for plugin !
+NSString *path = [NSString stringWithFormat:@"%@%@",[myBundle resourcePath],
+		@"/align_image_stack"];
+	NSLog(@"%s path is : %@",__PRETTY_FUNCTION__,path);
+	// check for enfuse binaries...
+	if([[NSFileManager defaultManager] isExecutableFileAtPath:path]==NO){
+		NSString *alert = [path stringByAppendingString: @" is not executable!"];
+		NSRunAlertPanel (NULL, alert, @"OK", NULL, NULL);
+		[NSApp terminate:nil];
+	}
+	
+	path = [NSString stringWithFormat:@"%@%@",[myBundle resourcePath],
+		@"/enfuse"];
+	NSLog(@"%s path is : %@",__PRETTY_FUNCTION__,path);
+	
+	// check for enfuse binaries...
+	if([[NSFileManager defaultManager] isExecutableFileAtPath:path]==NO){
+		NSString *alert = [path stringByAppendingString: @" is not executable!"];
+		NSRunAlertPanel (NULL, alert, @"OK", NULL, NULL);
+		[NSApp terminate:nil];
+	}		
+#endif
+
 	}
 	
 	return _editWindow;
@@ -194,25 +223,29 @@
 - (void)editManager:(id<ApertureEditManager>)editManager didImportImageAtPath:(NSString *)path versionUniqueID:(NSString *)versionUniqueID
 {
 	NSLog(@"%s",__PRETTY_FUNCTION__);
-
-	// add some keywords ...
 	NSArray *version = [NSArray arrayWithObject:versionUniqueID];
-	NSString *keyword = @"Enfuse";
-	NSArray *keywordHierarchy = [NSArray arrayWithObject:keyword];
-	NSArray *keywords =  [NSArray arrayWithObject:keywordHierarchy];
-	[_editManager addHierarchicalKeywords:keywords toVersions:version];
 	
-	// and some metadata
-	NSDictionary *customMetadata = [NSDictionary dictionaryWithObject:[mContrastSlider stringValue] 
-			forKey:@"Contrast"];
-	[_editManager addCustomMetadata:customMetadata toVersions:version];
+	if ([[useroptions valueForKey:@"addKeyword"] boolValue]) {
+		// add some keywords ...
+		
+		NSString *keyword = [useroptions valueForKey:@"keyword"] /*@"Enfuse"*/;
+			NSArray *keywordHierarchy = [NSArray arrayWithObject:keyword];
+			NSArray *keywords =  [NSArray arrayWithObject:keywordHierarchy];
+			[_editManager addHierarchicalKeywords:keywords toVersions:version];
+			
+	}
 
-	// do some cleanup
-	int count = [[_editManager editableVersionIds]  count];
-	NSLog(@"%s edit count :%d to be removed",__PRETTY_FUNCTION__,count );
-	[_editManager deleteVersions:[_editManager editableVersionIds]];
-	
-    [_editManager endEditSession];
+// and some metadata
+NSDictionary *customMetadata = [NSDictionary dictionaryWithObject:[mContrastSlider stringValue] 
+														   forKey:@"Contrast"];
+[_editManager addCustomMetadata:customMetadata toVersions:version];
+
+// do some cleanup
+int count = [[_editManager editableVersionIds]  count];
+NSLog(@"%s edit count :%d to be removed",__PRETTY_FUNCTION__,count );
+[_editManager deleteVersions:[_editManager editableVersionIds]];
+
+[_editManager endEditSession];
 }
 
 - (void)editManager:(id<ApertureEditManager>)editManager didNotImportImageAtPath:(NSString *)path error:(NSError *)error;
@@ -232,10 +265,8 @@
 {	
 	NSLog(@"%s",__PRETTY_FUNCTION__);
 	if (findRunning) { 
-		[enfuseTask stopProcess];
-		// Release the memory for this wrapper object
-		[enfuseTask release];
-		enfuseTask=nil;
+		NSRunAlertPanel (NSLocalizedString(@"Already Running task Error",@""),
+				 NSLocalizedString(@"NYI",nil), NSLocalizedString(@"OK",nil), NULL, NULL);
 	}
   // maybe we should to some cleanup ?
   //- (void)deleteVersions:(NSArray *)versionUniqueIDs;
@@ -248,8 +279,19 @@
 {
   NSLog(@"%s",__PRETTY_FUNCTION__);
 
-  // maybe we should to some cleanup ?
+  if (findRunning) { 
+		NSRunAlertPanel (NSLocalizedString(@"Already Running task Error",@""),
+				 NSLocalizedString(@"NYI",nil), NSLocalizedString(@"OK",nil), NULL, NULL);
+	}
+	
+	// maybe we should to some cleanup ?
   //- (void)deleteVersions:(NSArray *)versionUniqueIDs;
+
+   if ([[useroptions valueForKey:@"importInAperture"] boolValue]) 
+		NSLog(@"%s should import",__PRETTY_FUNCTION__);
+		
+	if ([[useroptions valueForKey:@"stackWithOriginal"] boolValue])
+		NSLog(@"%s should stack",__PRETTY_FUNCTION__);
 
   if ([_editManager canImport]) {
     NSLog(@"%s will import",__PRETTY_FUNCTION__);
@@ -444,6 +486,19 @@
 - (IBAction) about: (IBOutlet)sender;
 {
         NSLog(@"%s",__PRETTY_FUNCTION__);
+		#if 0
+// Method to load the .nib file for the info panel.
+    if (!infoPanel) {
+        if (![NSBundle loadNibNamed:@"InfoPanel" owner:self])  {
+            NSLog(@"Failed to load InfoPanel.nib");
+            NSBeep();
+            return;
+        }
+        [infoPanel center];
+    }
+    [infoPanel makeKeyAndOrderFront:nil];
+#endif
+
 }
 
 - (IBAction) takeSaturation: (IBOutlet)sender;
@@ -529,13 +584,21 @@
 {
 	NSLog(@"%s",__PRETTY_FUNCTION__);
 	
-//	[options setAddKeyword:[exportOptionsSheetController AddKeyword]];
-//	[options setImportInAperture:[exportOptionsSheetController ImportInAperture]];
-//	[options setStackWithOriginal:[exportOptionsSheetController stackWithOriginal]];
-//	if ([options addKeyword] == YES)
-//		[options setKeyword:[exportOptionsSheetController keyword]];
-//	else 
-//		[options setKeyword:nil];
+	[useroptions setValue:[NSNumber numberWithBool:[exportOptionsSheetController AddKeyword]]
+		forKey:@"addKeyword"];
+	[useroptions setValue:[NSNumber numberWithBool:[exportOptionsSheetController ImportInAperture]] 
+		forKey:@"importInAperture"];
+	[useroptions setValue:[NSNumber numberWithBool:[exportOptionsSheetController stackWithOriginal]]
+		forKey:@"stackWithOriginal"];
+	if ([exportOptionsSheetController AddKeyword])
+		[useroptions setObject:[exportOptionsSheetController keyword]
+			 forKey:@"keyword"];
+	else
+		[useroptions removeObjectForKey:@"keyword"];
+
+	[useroptions setObject:[exportOptionsSheetController exportDirectory]
+			 forKey:@"exportDirectory"];
+
 }
 
 - (IBAction)openPreferences:(id)sender
@@ -544,14 +607,28 @@
 	
 	if (exportOptionsSheetController == nil) 
 		exportOptionsSheetController = [[ExportOptionsController alloc] init ];
-
-//    [exportOptionsSheetController setImportInAperture:[options importInAperture]];
-//	[exportOptionsSheetController setAddKeyword:[options addKeyword]];
-//	[exportOptionsSheetController stackWithOriginal:[options stackWithOriginal]];
-//	if ([options addKeyword])
-//		[exportOptionsSheetController setKeyword:[options keyword]];
-		
-	[exportOptionsSheetController runSheet:[_editManager apertureWindow] selector:@selector(preferencesSaving:) target:self];
+	
+		  [exportOptionsSheetController setImportInAperture:
+			  [[useroptions valueForKey:@"importInAperture"] boolValue]];
+		  [exportOptionsSheetController stackWithOriginal:
+			  [[useroptions valueForKey:@"stackWithOriginal"] boolValue]];
+		  [exportOptionsSheetController setAddKeyword:
+			  [[useroptions valueForKey:@"addKeyword"] boolValue]];
+		  if ([[useroptions valueForKey:@"addKeyword"] boolValue])
+			  [exportOptionsSheetController setKeyword:
+				  [useroptions valueForKey:@"keyword"]];
+		  
+		  if ([useroptions valueForKey:@"exportDirectory"])
+		  [exportOptionsSheetController setExportDirectory:
+			[useroptions valueForKey:@"exportDirectory"]];
+		  else {
+				NSString *outputDirectory;
+			    outputDirectory = NSHomeDirectory();
+                outputDirectory = [outputDirectory stringByAppendingPathComponent:@"Pictures"];
+				  [exportOptionsSheetController setExportDirectory:outputDirectory];
+		  }
+			
+		  [exportOptionsSheetController runSheet:[_editManager apertureWindow] selector:@selector(preferencesSaving:) target:self];
 }
 
 - (IBAction) enfuse: (IBOutlet)sender;
@@ -560,46 +637,296 @@
 	if (findRunning) {
 		NSLog(@"already running");
 		NSRunAlertPanel (NSLocalizedString(@"Error",@""),
-				 NSLocalizedString(@"Process already running",nil), NSLocalizedString(@"OK",nil), NULL, NULL);
+						 NSLocalizedString(@"Process already running",nil), NSLocalizedString(@"OK",nil), NULL, NULL);
+		findRunning = NO;
 		return;
 	   } else {
-			 if ([mAutoAlign state] == NSOnState) {
-				NSLog(@"%s need to autoalign grid : %@, ctrl : %@",__PRETTY_FUNCTION__,[mGridSize stringValue],[mControlPoints stringValue]);
-				NSRunAlertPanel (NSLocalizedString(@"Autoalign Error",@""),
-				 NSLocalizedString(@"NYI",nil), NSLocalizedString(@"OK",nil), NULL, NULL);
-				 return;
+		   findRunning = YES;
+		   if (aligntask != nil) {
+			   NSLog(@"%s need to cleanup autoalign ?",__PRETTY_FUNCTION__);
+			   [aligntask release];
+			   aligntask = nil;
+		   }
+		   
+		   if ([mAutoAlign state] == NSOnState) {
+			   NSLog(@"%s need to autoalign",__PRETTY_FUNCTION__);
+			   aligntask = [[alignStackTask alloc] initWithPath:[self temppath]];
+			   [aligntask setGridSize:[mGridSize stringValue]];
+			   [aligntask setControlPoints:[mControlPoints stringValue]];				   
+			   
+			   NSLog(@"%s check edit count :%d",__PRETTY_FUNCTION__,[[_editManager editableVersionIds]  count] );
+			   //int i, count = [[_editManager selectedVersionIds] count];
+			   //NSLog(@"%s adding selected : %d",__PRETTY_FUNCTION__,count);
+			   // Tell Aperture to make an editable version of these images. If this version is already editable, this method won't generate a new version
+			   // but will still return the appropriate properties.
+			   // format ? requestedFormat:kApertureImageFormatTIFF8
+			   NSArray *properties = [_editManager editableVersionsOfVersions:[_editManager selectedVersionIds] stackWithOriginal:YES];		   
+			   //NSLog(@"%s editables propos are : << %@ >>",__PRETTY_FUNCTION__,properties);
+			   
+			   int i, count = [[_editManager editableVersionIds]  count];
+			   NSLog(@"%s edit count :%d",__PRETTY_FUNCTION__,count );
+			   
+			   for (i = 0; i < count; i++) {
+				   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+				   // if ([[obj valueForKey:@"enable"] boolValue]){
+				   
+				   //NSDictionary *imageProperties = [properties objectAtIndex:0];
+				   //    Get the path to the editable version
+				   NSString *editableVersionId = [[_editManager editableVersionIds] objectAtIndex:i];
+				   NSLog(@"%s edit %@",__PRETTY_FUNCTION__,editableVersionId);
+				   NSString *imagePath = [_editManager pathOfEditableFileForVersion:editableVersionId];
+				   [aligntask addFile:imagePath];
+				   //NSLog(@"%s : %@ %@ %@ %@",__PRETTY_FUNCTION__,
+				   //	versionID,editableVersionId,imagePath,path);
+				   [pool release];
+				   }
+			   
+			   [mProgressIndicator setUsesThreadedAnimation:YES];
+			   //[mProgressIndicator setIndeterminate:YES];
+			   [mProgressIndicator setDoubleValue:0.0];
+			   [mProgressIndicator setMaxValue:(1+23*[images count])]; // TOTO : add enfuse step ?
+			   [mProgressIndicator startAnimation:self];
+			   [mProgressText setStringValue:@"Aligning..."];
+			   [aligntask setDelegate:self];
+			   [aligntask setProgress:mProgressIndicator]; // needed ?
+			   [NSThread detachNewThreadSelector:@selector(runAlign)
+										toTarget:aligntask
+									  withObject:nil];
+			   //[mProgressIndicator stopAnimation:self];
+			   //[mProgressIndicator setIndeterminate:NO];
+			   // for now !
+			   //[mEnfuseButton setEnabled:NO];
+			   [mEnfuseButton setTitle:@"Cancel"];
+			   return; // testing !
+			   } else {
+				   NSLog(@"%s need to enfuse",__PRETTY_FUNCTION__);
+				   [self doEnfuse];
+			   }
+		   
+		   }
+	   }
+
+
+	   
+- (void)doEnfuse
+{
+	NSLog(@"%s",__PRETTY_FUNCTION__);
+	NSDictionary* file=nil;
+	
+	//
+	// create the output file name 
+	//
+	file = [images objectAtIndex:0];
+	NSString *filename = [[file valueForKey:@"file"] lastPathComponent ]; 
+	
+	// TODO [[mInputFile stringValue] lastPathComponent];
+							  //NSString *extension = [[filename pathExtension] lowercaseString];
+							  //NSLog(filename);
+	NSString* outputfile;
+	
+	switch ([[mOutputType selectedCell] tag]) {
+		case 0 : /* absolute */
+			outputfile = [ [useroptions valueForKey:@"exportDirectory"] /*[mOuputFile stringValue]*/
+                                      stringByAppendingPathComponent:[[NSFileManager defaultManager] nextUniqueNameUsing:[mOutFile stringValue]
+																					withFormat:[[mOutFormat titleOfSelectedItem] lowercaseString]
+																					 appending:[mAppendTo stringValue] ]];
+			break;
+		case 1: /* append */
+			outputfile = [ [useroptions valueForKey:@"exportDirectory"] /*[mOuputFile stringValue]*/
+	                                stringByAppendingPathComponent:[[NSFileManager defaultManager] nextUniqueNameUsing:filename
+																				  withFormat:[[mOutFormat titleOfSelectedItem] lowercaseString]
+																				   appending:[mAppendTo stringValue] ]];
+			break;
+		default:
+			NSLog(@"bad selected tag is %d",[[mOutputType selectedCell] tag]);
+	}
+	
+	[self setOutputfile:outputfile];	
+	
+	// 
+	// create the enfuse task
+	if (enfusetask != nil) {
+			NSLog(@"%s need to enfuse task",__PRETTY_FUNCTION__);
+				[enfusetask release];
+				enfusetask = nil;
+	}
+	
+	enfusetask = [[enfuseTask alloc] init];
+	
+	// temporary file for output
+	[enfusetask setOutputfile:[[NSFileManager defaultManager] tempfilename:[[mOutFormat titleOfSelectedItem] lowercaseString]]];
+	
+	// TODO : check if align_image was run ...
+	if ([mAutoAlign state] == NSOnState) {
+		NSLog(@"%s autoalign was run, get align data",__PRETTY_FUNCTION__);
+		// put filenames and full pathnames into the file array
+		NSEnumerator *enumerator = [[[NSFileManager defaultManager] directoryContentsAtPath: [self temppath] ] objectEnumerator];
+		while (nil != (filename = [enumerator nextObject])) {
+			//NSLog(@"file : %@",[filename lastPathComponent]);
+			if ([[filename lastPathComponent] hasPrefix:@"align"]) {				
+				[enfusetask addFile:[NSString stringWithFormat:@"%@/%@",[self temppath],filename]];
 			}
-			
-		   // If the task is still sitting around from the last run, release it
-		   if (enfuseTask!=nil)
-			   [enfuseTask release];
+		}
+		
+	} else {
+		NSDictionary* obj=nil;
+		NSEnumerator *enumerator = [images objectEnumerator];
+		
+		while ( nil != (obj = [enumerator nextObject]) ) {
+			if ([[obj valueForKey:@"enable"] boolValue]){
+				//NSLog(@"add enable : %@",[obj valueForKey:@"text"]);
+				[enfusetask addFile:[obj valueForKey:@"file"]]; // TODO : better !
+			}
+		}
+	}		
+	
+	if ([[mOutFormat titleOfSelectedItem] isEqualToString:@"JPEG"] ) {
+		[enfusetask addArg:[NSString stringWithFormat:@"--compression=%@",[mOutQuality stringValue]]];
+	} else if ([[mOutFormat titleOfSelectedItem] isEqualToString:@"TIFF"] ) {
+		[enfusetask addArg:@"--compression=LZW"]; // if jpeg !
+	}
+	
+	
+	[enfusetask addArg:[NSString stringWithFormat:@"--wExposure=%@",[mExposureSlider stringValue]]];
+				
+	[enfusetask addArg:[NSString stringWithFormat:@"--wSaturation=%@",[mSaturationSlider stringValue]]];
+	[enfusetask addArg:[NSString stringWithFormat:@"--wContrast=%@",[mContrastSlider stringValue]]];
+				
+	[enfusetask addArg:[NSString stringWithFormat:@"--wMu=%@",[mMuSlider stringValue]]];
+	[enfusetask addArg:[NSString stringWithFormat:@"--wSigma=%@",[mSigmaSlider stringValue]]];
+	
+	[mProgressIndicator setDoubleValue:0.0];
+	[mProgressIndicator setMaxValue:(1+4*[images count])];
+	[mProgressIndicator startAnimation:self];
+	[enfusetask setDelegate:self];
+	[enfusetask setProgress:mProgressIndicator]; // needed ?
+	[NSThread detachNewThreadSelector:@selector(runEnfuse)
+										 toTarget:enfusetask
+									   withObject:nil];
+				
+	//[mEnfuseButton setEnabled:NO];
+	[mEnfuseButton setTitle:@"Cancel"];
+	return; // testing !				
+}
+	   
+- (void)runEnfuse
+{
+		      // If the task is still sitting around from the last run, release it
+		   //if (enfuseTask!=nil)
+			 //  [enfuseTask release];
 		   // Let's allocate memory for and initialize a new TaskWrapper object, passing
 		   // in ourselves as the controller for this TaskWrapper object, the path
 		   // to the command-line tool, and the contents of the text field that
 		   // displays what the user wants to search on
 		   NSMutableArray *args = [NSMutableArray array];
 		   
-		   [args addObject:_enfusePath];
+		   NSString *filename = @""; // TODO [[mInputFile stringValue] lastPathComponent];
+									 //NSString *extension = [[filename pathExtension] lowercaseString];
+									 //NSLog(filename);
+		   NSString* outputfile;
 		   
+		   switch ([[mOutputType selectedCell] tag]) {
+			   case 0 : /* absolute */
+				   outputfile = [ [useroptions valueForKey:@"exportDirectory"]  /*[mOuputFile stringValue]*/
+                                      stringByAppendingPathComponent:[[NSFileManager defaultManager] nextUniqueNameUsing:[mOutFile stringValue]
+																					withFormat:[[mOutFormat titleOfSelectedItem] lowercaseString]
+																					 appending:[mAppendTo stringValue] ]];
+				   break;
+			   case 1: /* append */
+				   outputfile = [[useroptions valueForKey:@"exportDirectory"] /*[mOuputFile stringValue]*/
+	                                stringByAppendingPathComponent:[[NSFileManager defaultManager] nextUniqueNameUsing:filename
+																				  withFormat:[[mOutFormat titleOfSelectedItem] lowercaseString]
+																				   appending:[mAppendTo stringValue] ]];
+				   break;
+			   default:
+				   NSLog(@"bad selected tag is %d",[[mOutputType selectedCell] tag]);
+		   }
+		   
+		   [self setOutputfile:outputfile];
+		   [self setTempfile:[[NSFileManager defaultManager] tempfilename:[[mOutFormat titleOfSelectedItem] lowercaseString]]];
+		   NSLog(@"files are : (%@) %@,%@",outputfile,[self outputfile],[self tempfile]);
+
+#ifndef GNUSTEP
+		   NSString *path = [NSString stringWithFormat:@"%@%@",[[NSBundle mainBundle] bundlePath],
+			   @"/enfuse/enfuse"];
+		   //[[ NSBundle mainBundle ] pathForAuxiliaryExecutable: @"greycstoration"];
+		   //NSLog(@"path is %@ -> %@",path,[[ NSBundle mainBundle ] bundlePath]);
+		   //[args addObject:[ [ NSBundle mainBundle ] pathForAuxiliaryExecutable: @"greycstoration" ]];
+		   [args addObject:path];
+		   //[args addObject:@"/Users/vbr/Source/CImg-1.2.9/examples/greycstoration"];
+		   // NSString *pathToFfmpeg = [NSString stringWithFormat:@"%@%@",[[NSBundle mainBundle] resourcePath],@"/ffmpeg"];
+#else
+		   [args addObject:@"./enfuse"];
+#endif
+		   // for debug ? [args addObject:@"-v"]; // be a little bit verbose ?
+		   
+		   //[args addObject:@"greycstoration"];
+		   NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+		   //NSLog(@"icc : %@",[defaults boolForKey:@"useCIECAM02"]);
+		   if ([defaults boolForKey:@"useCIECAM"]) { // ICC profile
+			   //NSLog(@"%s use ICC !",__PRETTY_FUNCTION__);
+			   [args addObject:@"-c"];
+		   }
+		  	
+		   NSString *cachesize = [defaults stringForKey:@"cachesize"];
+		   if (![cachesize isEqualToString:@"default" ]) {
+			   [args addObject:@"-m"];
+			   [args addObject:cachesize];
+		   }
+		   NSString *blocksize = [defaults stringForKey:@"blocksize"];
+		   if (![blocksize isEqualToString:@"default" ]) {
+			   [args addObject:@"-b"];
+			   [args addObject:blocksize];
+		   }
+
 		   [args addObject:@"-o"];
-#if 1
+		   [args addObject:[self tempfile]];
+		   
+		   //[args addObject:@"-restore"];	
+		   //[args addObject:[mInputFile stringValue]];
+		   NSDictionary* obj=nil;
+		   NSEnumerator *enumerator = [images objectEnumerator];
+		   
+		   while ( nil != (obj = [enumerator nextObject]) ) {
+			   if ([[obj valueForKey:@"enable"] boolValue]){
+				   //NSLog(@"add enable : %@",[obj valueForKey:@"text"]);
+				   [args addObject:[obj valueForKey:@"file"]]; // TODO : better !
+			   }
+		   }
+		   
+		   
+		   //NSLog(@"info jpeg : %@",[mOutQuality stringValue]);
+		   if ([[mOutFormat titleOfSelectedItem] isEqualToString:@"JPEG"] ) {
+			   [args addObject:[NSString stringWithFormat:@"--compression=%@",[mOutQuality stringValue]]];
+		   } else if ([[mOutFormat titleOfSelectedItem] isEqualToString:@"TIFF"] ) {
+			   [args addObject:@"--compression=LZW"]; // if jpeg !
+		   }
+		   
+		   [args addObject:[NSString stringWithFormat:@"--wExposure=%@",[mExposureSlider stringValue]]];
+		   [args addObject:[NSString stringWithFormat:@"--wSaturation=%@",[mSaturationSlider stringValue]]];
+		   [args addObject:[NSString stringWithFormat:@"--wContrast=%@",[mContrastSlider stringValue]]];
+		   
+		   [args addObject:[NSString stringWithFormat:@"--wMu=%@",[mMuSlider stringValue]]];
+		   [args addObject:[NSString stringWithFormat:@"--wSigma=%@",[mSigmaSlider stringValue]]];
+		   
+		   [mProgressIndicator setDoubleValue:0.0];
+		   [mProgressIndicator setMaxValue:(1+4*[images count])];
+		
+		   //enfuseTask=[[TaskWrapper alloc] initWithController:self arguments:args];
+		   // kick off the process asynchronously
+		   //[enfuseTask startProcess];
+}
+	   
+	   
+#if 0
 		   NSString *outputfile = NSHomeDirectory();
                    outputfile = [outputfile stringByAppendingPathComponent:@"Pictures"];
 		   NSString *tempString = [[NSProcessInfo processInfo] globallyUniqueString];
       		   outputfile = [outputfile stringByAppendingPathComponent:tempString];
 		   [self setOutputfile:[NSString stringWithFormat:@"%@.%@",outputfile,@"tiff"]]; // TODO
-#else
-		   NSFileManager *fm = [NSFileManager defaultManager];
-		   NSString *outputfile = NSHomeDirectory();
-                   outputfile = [outputfile stringByAppendingPathComponent:@"Pictures"];
-		   NSString *tempString = [[NSProcessInfo processInfo] globallyUniqueString];
-		   outputfile = [ outputfile
-                                stringByAppendingPathComponent:[fm nextUniqueNameUsing:filename
-                                withFormat:@"tiff"
-                                appending:@"_enfused" ]];
-		   [self setOutputfile:outputfile];
-#endif
-		   [args addObject:[self outputfile]]; // TODO
+
+
+
 		   
 		   NSLog(@"%s check edit count :%d",__PRETTY_FUNCTION__,[[_editManager editableVersionIds]  count] );
 		   //int i, count = [[_editManager selectedVersionIds] count];
@@ -626,89 +953,84 @@
 				//	versionID,editableVersionId,imagePath,path);
 			 [pool release];
 		   }
-		   [args addObject:[NSString stringWithFormat:@"--wExposure=%@",[mExposureSlider stringValue]]];
-		   [args addObject:[NSString stringWithFormat:@"--wSaturation=%@",[mSaturationSlider stringValue]]];
-		   [args addObject:[NSString stringWithFormat:@"--wContrast=%@",[mContrastSlider stringValue]]];
-		   
-		   [args addObject:[NSString stringWithFormat:@"--wMu=%@",[mMuSlider stringValue]]];
-		   [args addObject:[NSString stringWithFormat:@"--wSigma=%@",[mSigmaSlider stringValue]]];
-		   
-		   NSLog(@"%s will exec : %@",__PRETTY_FUNCTION__,args);
-
-		   [mProgressIndicator setDoubleValue:0.0];
-		   [mProgressIndicator setMaxValue:(2+4*count)];
-		   enfuseTask=[[TaskWrapper alloc] initWithController:self arguments:args];
-		   // kick off the process asynchronously
-		   int status = [enfuseTask startProcess];
-		   if (status==0) {
-			   //NSLog(@"%s main thread is :%@",__PRETTY_FUNCTION__,[NSThread currentThread]);
-			 #if 1
-			     // wait for it to finish ...
-			   [enfuseTask waitUntilExit];
-			   
-			   NSLog(@"%s exit run",__PRETTY_FUNCTION__);
-			   [enfuseTask release]; // Don't forget to clean up memory
-			   enfuseTask=nil; // Just in case...
-			   findRunning = NO;
-			#endif
-		   } else {
-			   //NSLog(@"%s can't run",__PRETTY_FUNCTION__);
-			   NSRunAlertPanel (NULL, @"running error", @"OK", NULL, NULL);
-		   }
-		   
-	   }
-}
-
+	
+	#endif
+	
 #pragma mark -
 #pragma mark TaskWrapper
 
-// This callback is implemented as part of conforming to the ProcessController protocol.
-// It will be called whenever there is output from the TaskWrapper.
-- (void)appendOutput:(NSString *)output
+- (BOOL)shouldContinueOperationWithProgressInfo:(TaskProgressInfo*)inProgressInfo;
 {
-   if ([output hasPrefix:@"Generating"] || [output hasPrefix:@"Collapsing"]  ||
-        [output hasPrefix: @"Loading next image"] || [output hasPrefix: @"Using"] ) {
-        [mProgressIndicator incrementBy:1.0];
-		NSLog(@"%s next",__PRETTY_FUNCTION__);
-    } 
+        //NSLog(@"%s thread is : %@",__PRETTY_FUNCTION__,[NSThread currentThread]);
+        //NSLog(@"%s text is : %@",__PRETTY_FUNCTION__,[inProgressInfo displayText]);
+	[mProgressText setStringValue:[inProgressInfo displayText]];
+	[mProgressIndicator setDoubleValue:[[inProgressInfo progressValue] doubleValue]];
+
+	// TODO : should check !
+	[inProgressInfo setContinueOperation:findRunning];
+	return findRunning;
 }
 
-// A callback that gets called when a TaskWrapper is launched, allowing us to do any setup
-// that is needed from the app side.  This method is implemented as a part of conforming
-// to the ProcessController protocol.
-- (void)processStarted
+//
+// delegate for align_task thread
+-(void)alignFinish:(int)status;
 {
-   findRunning=YES;
-    // clear the results
-    //[resultsTextField setString:@""];
-    // change the "Sleuth" button to say "Stop"
-    //[mRestoreButton setTitle:@"Stop"];
-    [mEnfuseButton setEnabled:NO];
-#if 0
-		   [[mProgressWindow window] center];
-		   [[mProgressWindow window] makeKeyAndOrderFront:nil]; // nspanel was originally hidden in Interface Builder
-		   [[mProgressWindow window] display];
-#endif
-	   [mProgressIndicator startAnimation:self];
+	NSLog(@"%s status %d",__PRETTY_FUNCTION__,status);
+        [mProgressIndicator setDoubleValue:0];
+	[mProgressIndicator stopAnimation:self];
+	[mProgressText setStringValue:@""];
+	int canceled = [aligntask cancel];
+	//[aligntask release];
+	//aligntask = nil;
+	if (status == 0 && canceled != YES) {
+		[self doEnfuse];
+	} else {
+		[mEnfuseButton setTitle:@"Enfuse"];
+		// [mEnfuseButton setEnabled:YES];
+	}
 }
 
-// A callback that gets called when a TaskWrapper is completed, allowing us to do any cleanup
-// that is needed from the app side.  This method is implemented as a part of conforming
-// to the ProcessController protocol.
-- (void)processFinished:(int)status
+//
+// delegate for enfuse task thread 
+-(void)enfuseFinish:(int)status;
 {
-    [mProgressIndicator stopAnimation:self];
-    [mProgressIndicator setDoubleValue:0];
-
-	NSLog(@"%s status is : %d",__PRETTY_FUNCTION__,status);
+	NSLog(@"%s status %d",__PRETTY_FUNCTION__,status);
+	[mProgressIndicator stopAnimation:self];
+        [mProgressIndicator setDoubleValue:0];
+	[mProgressText setStringValue:@""];
+	
     findRunning=NO;
     // change the button's title back for the next search
     //[mEnfuseButton setTitle:@"Enfuse"];
-    [mEnfuseButton setEnabled:YES];
-
-//    [[mProgressWindow window] orderOut:nil];
-
+    //[mEnfuseButton setEnabled:YES];
+	int canceled = [enfusetask cancel];
+	if (status  == 0 && canceled != YES) {
+		if([mCopyMeta state]==NSOnState)  {
+			[mProgressText setStringValue:@"Copying Exif values..."];
+			[self copyExifFrom:[[images objectAtIndex:0] valueForKey:@"file"] 
+				to:[self outputfile] with:[enfusetask outputfile]];
+		} else {
+			NSFileManager *fm = [NSFileManager defaultManager];
+			if ([fm fileExistsAtPath:([enfusetask outputfile])]){
+				BOOL result = [fm movePath:[enfusetask outputfile] toPath:[self outputfile] handler:self];
+			} else {
+				NSString *alert;
+				NSString *file = [enfusetask outputfile];
+				if (file != nil)
+					alert = [file stringByAppendingString: @" do not exist!\nCan't rename"];
+				else
+					alert = @"no file name !";
+				NSRunAlertPanel (NULL, alert, @"OK", NULL, NULL);
+			}
+		}
+		
+		[self openFile:[self outputfile]];
+	}
+	[mProgressText setStringValue:@""];
+        [mEnfuseButton setTitle:@"Enfuse"];
+	//[mEnfuseButton setEnabled:YES];
 }
+
 
 -(NSString*)outputfile;
 {
@@ -723,9 +1045,67 @@
         }
 }
 
+-(NSString*)tempfile;
+{
+	return _tmpfile;
+}
+
+-(void)setTempfile:(NSString *)file;
+{
+	if (_tmpfile != file) {
+		[_tmpfile release];
+        _tmpfile = [file copy];
+	}
+}
+
+-(NSString*)temppath;
+{
+        return _tmppath;
+}
+
+-(void)setTempPath:(NSString *)file;
+{
+        if (_tmppath != file) {
+                [_tmppath release];
+        _tmppath = [file copy];
+        }
+}
+
 @end
 
 @implementation enfuseEdit (Private)
+
+-(NSString *)initTempDirectory;
+{
+        // Create our temporary directory
+                NSString* tempDirectoryPath = [NSString stringWithFormat:@"%@/enfuseEdiI", 
+				NSTemporaryDirectory()];
+
+                // If it doesn't exist, create it
+                NSFileManager *fileManager = [NSFileManager defaultManager];
+                BOOL isDirectory;
+                if (![fileManager fileExistsAtPath:tempDirectoryPath isDirectory:&isDirectory])
+                {
+                        [fileManager createDirectoryAtPath:tempDirectoryPath attributes:nil];
+                }
+                else if (isDirectory) // If a folder already exists, empty it.
+                {
+                        NSArray *contents = [fileManager directoryContentsAtPath:tempDirectoryPath];
+                        int i;
+                        for (i = 0; i < [contents count]; i++)
+                        {
+                                NSString *tempFilePath = [NSString stringWithFormat:@"%@/%@", 
+					tempDirectoryPath, [contents objectAtIndex:i]];
+                                [fileManager removeFileAtPath:tempFilePath handler:nil];
+                        }
+                }
+                else // Delete the old file and create a new directory
+                {
+                        [fileManager removeFileAtPath:tempDirectoryPath handler:nil];
+                        [fileManager createDirectoryAtPath:tempDirectoryPath attributes:nil];
+                }
+		return tempDirectoryPath;
+}
 
 // write back the defaults ...
 // TODO
@@ -737,7 +1117,27 @@
               [_editManager setUserDefaultsValue:[mOutFile stringValue] forKey:@"outputFile"];
               [_editManager setUserDefaultsValue:[mAppendTo stringValue] forKey:@"outputAppendTo"];
               [_editManager setUserDefaultsValue:[mOutQuality stringValue] forKey:@"outputQuality"];
-#endif       
+#endif      
+			  id obj = [useroptions valueForKey:@"importInAperture"];
+			  if (obj != nil)
+				  [_editManager setUserDefaultsValue:obj
+										   forKey:@"importInAperture"];
+			  
+			  obj = [useroptions valueForKey:@"stackWithOriginal"];
+			  if (obj != nil)
+				  [_editManager setUserDefaultsValue:obj
+										   forKey:@"stackWithOriginal"];
+			  
+			  obj = [useroptions valueForKey:@"addKeyword"];
+			  if (obj != nil) {
+				  [_editManager setUserDefaultsValue:obj
+										   forKey:@"addKeyword"];
+				  if ([obj boolValue])
+					  [_editManager setUserDefaultsValue:[useroptions valueForKey:@"keyword"]
+											   forKey:@"keyword"];
+				  
+			  } 
+			  
 }
 
 // read back the defaults ...
@@ -753,33 +1153,5 @@
         #endif
 }
 
--(void)initTempDirectory
-{
-	// Create our temporary directory
-		NSString *tempDirectoryPath = [[NSString stringWithFormat:@"%@/enfuseEdit/", NSTemporaryDirectory()] retain];
-		
-		// If it doesn't exist, create it
-		NSFileManager *fileManager = [NSFileManager defaultManager];
-		BOOL isDirectory;
-		if (![fileManager fileExistsAtPath:tempDirectoryPath isDirectory:&isDirectory])
-		{
-			[fileManager createDirectoryAtPath:tempDirectoryPath attributes:nil];
-		}
-		else if (isDirectory) // If a folder already exists, empty it.
-		{
-			NSArray *contents = [fileManager directoryContentsAtPath:tempDirectoryPath];
-			int i;
-			for (i = 0; i < [contents count]; i++)
-			{
-				NSString *tempFilePath = [NSString stringWithFormat:@"%@%@", tempDirectoryPath, [contents objectAtIndex:i]];
-				[fileManager removeFileAtPath:tempFilePath handler:nil];
-			}
-		}
-		else // Delete the old file and create a new directory
-		{
-			[fileManager removeFileAtPath:tempDirectoryPath handler:nil];
-			[fileManager createDirectoryAtPath:tempDirectoryPath attributes:nil];
-		}
-}
 
 @end

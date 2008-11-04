@@ -11,8 +11,10 @@
 #import "ApertureEditPlugIn.h"
 #import "ApertureEditManager.h"
 
-#import "TaskWrapper.h"
 #import "ExportOptionsController.h"
+#import "alignStackTask.h"
+#import "enfuseTask.h"
+#import "TaskWrapper.h"
 
 @interface enfuseEdit : NSObject <ApertureEditPlugIn>
 {
@@ -68,9 +70,23 @@
   IBOutlet NSTextField* mControlPoints;
   IBOutlet NSTextField* mGridSize;
   
+    // metadata ... 
+  IBOutlet NSButton* mCopyMeta;
+  IBOutlet NSButton* mCopyAperture;
+  IBOutlet NSButton* mCopyShutter;
+  IBOutlet NSButton* mCopyFocal;
+
   //
   IBOutlet NSProgressIndicator *mProgressIndicator;
   IBOutlet NSTextField *mProgressText;
+
+	 // ouput options
+  IBOutlet NSPopUpButton *mOutFormat;
+  IBOutlet NSTextField *mOutQuality;
+  IBOutlet NSTextField *mOutFile;
+  IBOutlet NSTextField *mAppendTo;
+  IBOutlet NSMatrix *mOutputType;
+  IBOutlet NSSlider *mOutputQualitySlider; 
 
 	 IBOutlet ExportOptionsController* exportOptionsSheetController;
 	
@@ -84,12 +100,18 @@
 	// task handling
   NSString *_enfusePath; 
   BOOL findRunning;
-  TaskWrapper *enfuseTask;
+  
+  //TaskWrapper *enfuseTask;
+  
+  	alignStackTask* aligntask;
+	enfuseTask* enfusetask;
+
 
       NSString* _outputfile;
     NSString* _tmpfile;
     NSString* _tmppath;
 
+	NSMutableDictionary* useroptions;
 }
 
 - (IBAction)_cancelEditing:(id)sender;
@@ -112,5 +134,14 @@
 
 -(NSString*)outputfile;
 -(void)setOutputfile:(NSString *)file;
+-(NSString*)tempfile;
+-(void)setTempfile:(NSString *)file;
+-(NSString*)temppath;
+-(void)setTempPath:(NSString *)file;
+
+
+-(void)alignFinish:(int)status;
+- (void)runEnfuse;
+- (void)doEnfuse;
 
 @end

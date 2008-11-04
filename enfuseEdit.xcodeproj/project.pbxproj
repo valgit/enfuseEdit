@@ -8,16 +8,16 @@
 
 /* Begin PBXBuildFile section */
 		1A2E93420EB10B410080069D /* ExportOptions.nib in Resources */ = {isa = PBXBuildFile; fileRef = 1A2E933C0EB10B410080069D /* ExportOptions.nib */; };
-		1A2E93470EB10B6B0080069D /* ExportOptionsController.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 1A2E93430EB10B6B0080069D /* ExportOptionsController.h */; };
-		1A2E93480EB10B6B0080069D /* ExportOptionsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A2E93440EB10B6B0080069D /* ExportOptionsController.m */; };
 		1A2E93490EB10B6B0080069D /* TaskProgressInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A2E93450EB10B6B0080069D /* TaskProgressInfo.m */; };
-		1A2E934A0EB10B6B0080069D /* TaskProgressInfo.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 1A2E93460EB10B6B0080069D /* TaskProgressInfo.h */; };
-		1A2E939E0EB111D10080069D /* CollapsibleBoxFramework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A2E93970EB111D10080069D /* CollapsibleBoxFramework.framework */; };
 		1A6965380E95606300FE9F6B /* TaskWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A6965370E95606300FE9F6B /* TaskWrapper.m */; };
 		1AAE75C20EA4531C00271EA0 /* general.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AAE75C00EA4531C00271EA0 /* general.png */; };
 		1AAE75C30EA4531C00271EA0 /* update.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 1AAE75C10EA4531C00271EA0 /* update.tiff */; };
-		1AAE76290EA4551000271EA0 /* enfuse in Resources */ = {isa = PBXBuildFile; fileRef = 1AAE76280EA4551000271EA0 /* enfuse */; };
-		1AAE76500EA4554C00271EA0 /* enfuse in CopyFiles */ = {isa = PBXBuildFile; fileRef = 1AAE76280EA4551000271EA0 /* enfuse */; };
+		7111D3610EC07F19006D679B /* ExportOptionsController.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 7111D35F0EC07F19006D679B /* ExportOptionsController.h */; };
+		7111D3620EC07F19006D679B /* ExportOptionsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7111D3600EC07F19006D679B /* ExportOptionsController.m */; };
+		7111D3F30EC084FF006D679B /* NSFileManager-Extensions.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 7111D3F10EC084FF006D679B /* NSFileManager-Extensions.h */; };
+		7111D3F40EC084FF006D679B /* NSFileManager-Extensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 7111D3F20EC084FF006D679B /* NSFileManager-Extensions.m */; };
+		7111D4500EC087E7006D679B /* alignStackTask.m in Sources */ = {isa = PBXBuildFile; fileRef = 7111D3560EC07E6D006D679B /* alignStackTask.m */; };
+		7111D4520EC0880B006D679B /* enfuseTask.m in Sources */ = {isa = PBXBuildFile; fileRef = 7111D3570EC07E6D006D679B /* enfuseTask.m */; };
 		8D5B49B0048680CD000E48DA /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C167DFE841241C02AAC07 /* InfoPlist.strings */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
 		D118EA660AC08CCB006DD2FE /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = D118EA640AC08CCB006DD2FE /* Localizable.strings */; };
@@ -33,9 +33,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 6;
 			files = (
-				1AAE76500EA4554C00271EA0 /* enfuse in CopyFiles */,
-				1A2E93470EB10B6B0080069D /* ExportOptionsController.h in CopyFiles */,
-				1A2E934A0EB10B6B0080069D /* TaskProgressInfo.h in CopyFiles */,
+				7111D3610EC07F19006D679B /* ExportOptionsController.h in CopyFiles */,
+				7111D3F30EC084FF006D679B /* NSFileManager-Extensions.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -47,20 +46,24 @@
 		089C167FFE841241C02AAC07 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		1A2E933D0EB10B410080069D /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/ExportOptions.nib; sourceTree = "<group>"; };
-		1A2E93430EB10B6B0080069D /* ExportOptionsController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ExportOptionsController.h; sourceTree = "<group>"; };
-		1A2E93440EB10B6B0080069D /* ExportOptionsController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = ExportOptionsController.m; sourceTree = "<group>"; };
 		1A2E93450EB10B6B0080069D /* TaskProgressInfo.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = TaskProgressInfo.m; sourceTree = "<group>"; };
 		1A2E93460EB10B6B0080069D /* TaskProgressInfo.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TaskProgressInfo.h; sourceTree = "<group>"; };
-		1A2E93970EB111D10080069D /* CollapsibleBoxFramework.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CollapsibleBoxFramework.framework; sourceTree = "<group>"; };
 		1A6965360E95606300FE9F6B /* TaskWrapper.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TaskWrapper.h; sourceTree = "<group>"; };
 		1A6965370E95606300FE9F6B /* TaskWrapper.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = TaskWrapper.m; sourceTree = "<group>"; };
 		1AAE75C00EA4531C00271EA0 /* general.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = general.png; sourceTree = "<group>"; };
 		1AAE75C10EA4531C00271EA0 /* update.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = update.tiff; sourceTree = "<group>"; };
-		1AAE76280EA4551000271EA0 /* enfuse */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = enfuse; sourceTree = "<group>"; };
 		287924C40DAEB3990074992A /* ApertureEditManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApertureEditManager.h; sourceTree = "<group>"; };
 		287924C50DAEB3990074992A /* ApertureEditPlugIn.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApertureEditPlugIn.h; sourceTree = "<group>"; };
 		287924C60DAEB3990074992A /* ApertureSDKCommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApertureSDKCommon.h; sourceTree = "<group>"; };
 		32DBCF630370AF2F00C91783 /* enfuseEdit_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = enfuseEdit_Prefix.pch; sourceTree = "<group>"; };
+		7111D3550EC07E6D006D679B /* alignStackTask.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = alignStackTask.h; sourceTree = "<group>"; };
+		7111D3560EC07E6D006D679B /* alignStackTask.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = alignStackTask.m; sourceTree = "<group>"; };
+		7111D3570EC07E6D006D679B /* enfuseTask.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = enfuseTask.m; sourceTree = "<group>"; };
+		7111D3580EC07E6D006D679B /* enfuseTask.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = enfuseTask.h; sourceTree = "<group>"; };
+		7111D35F0EC07F19006D679B /* ExportOptionsController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ExportOptionsController.h; sourceTree = "<group>"; };
+		7111D3600EC07F19006D679B /* ExportOptionsController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = ExportOptionsController.m; sourceTree = "<group>"; };
+		7111D3F10EC084FF006D679B /* NSFileManager-Extensions.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = "NSFileManager-Extensions.h"; sourceTree = "<group>"; };
+		7111D3F20EC084FF006D679B /* NSFileManager-Extensions.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = "NSFileManager-Extensions.m"; sourceTree = "<group>"; };
 		8D5B49B7048680CD000E48DA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Info.plist; sourceTree = "<group>"; };
 		D118EA650AC08CCB006DD2FE /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/Localizable.strings; sourceTree = "<group>"; };
 		D118EB0F0AC08EAE006DD2FE /* enfuseEdit.ApertureEdit */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = enfuseEdit.ApertureEdit; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -78,7 +81,6 @@
 			files = (
 				8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */,
 				D15DEA4A0ABF639500CBE3A5 /* PluginManager.framework in Frameworks */,
-				1A2E939E0EB111D10080069D /* CollapsibleBoxFramework.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -124,12 +126,18 @@
 		08FB77AFFE84173DC02AAC07 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				7111D3550EC07E6D006D679B /* alignStackTask.h */,
+				7111D3560EC07E6D006D679B /* alignStackTask.m */,
+				7111D3570EC07E6D006D679B /* enfuseTask.m */,
+				7111D3580EC07E6D006D679B /* enfuseTask.h */,
 				D15DEA4E0ABF63C600CBE3A5 /* enfuseEdit.h */,
 				D15DEA4D0ABF63C600CBE3A5 /* enfuseEdit.m */,
-				1A2E93430EB10B6B0080069D /* ExportOptionsController.h */,
-				1A2E93440EB10B6B0080069D /* ExportOptionsController.m */,
 				1A2E93450EB10B6B0080069D /* TaskProgressInfo.m */,
 				1A2E93460EB10B6B0080069D /* TaskProgressInfo.h */,
+				7111D35F0EC07F19006D679B /* ExportOptionsController.h */,
+				7111D3600EC07F19006D679B /* ExportOptionsController.m */,
+				7111D3F10EC084FF006D679B /* NSFileManager-Extensions.h */,
+				7111D3F20EC084FF006D679B /* NSFileManager-Extensions.m */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -137,7 +145,6 @@
 		1058C7ACFEA557BF11CA2CBB /* Linked Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				1A2E93970EB111D10080069D /* CollapsibleBoxFramework.framework */,
 				D15DEA490ABF639500CBE3A5 /* PluginManager.framework */,
 				1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */,
 			);
@@ -177,7 +184,6 @@
 		D118EB1C0AC08EE7006DD2FE /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				1AAE76280EA4551000271EA0 /* enfuse */,
 				D118EB0F0AC08EAE006DD2FE /* enfuseEdit.ApertureEdit */,
 			);
 			name = Products;
@@ -233,7 +239,6 @@
 				D118EA660AC08CCB006DD2FE /* Localizable.strings in Resources */,
 				1AAE75C20EA4531C00271EA0 /* general.png in Resources */,
 				1AAE75C30EA4531C00271EA0 /* update.tiff in Resources */,
-				1AAE76290EA4551000271EA0 /* enfuse in Resources */,
 				1A2E93420EB10B410080069D /* ExportOptions.nib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -263,8 +268,11 @@
 			files = (
 				D15DEA4F0ABF63C600CBE3A5 /* enfuseEdit.m in Sources */,
 				1A6965380E95606300FE9F6B /* TaskWrapper.m in Sources */,
-				1A2E93480EB10B6B0080069D /* ExportOptionsController.m in Sources */,
 				1A2E93490EB10B6B0080069D /* TaskProgressInfo.m in Sources */,
+				7111D3620EC07F19006D679B /* ExportOptionsController.m in Sources */,
+				7111D3F40EC084FF006D679B /* NSFileManager-Extensions.m in Sources */,
+				7111D4500EC087E7006D679B /* alignStackTask.m in Sources */,
+				7111D4520EC0880B006D679B /* enfuseTask.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
