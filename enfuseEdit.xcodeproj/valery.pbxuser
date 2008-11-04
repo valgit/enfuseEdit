@@ -95,8 +95,12 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 246483618;
-			PBXWorkspaceStateSaveDate = 246483618;
+			PBXPerProjectTemplateStateSaveDate = 247518764;
+			PBXWorkspaceStateSaveDate = 247518764;
+		};
+		perUserProjectItems = {
+			1AAA68F60EC0DE5600B13946 /* PBXBookmark */ = 1AAA68F60EC0DE5600B13946 /* PBXBookmark */;
+			1AAA68FD0EC0E35D00B13946 /* PBXTextBookmark */ = 1AAA68FD0EC0E35D00B13946 /* PBXTextBookmark */;
 		};
 		sourceControlManager = 1AEDA15C0E8FE94E000A34EA /* Source Control */;
 		userBuildSettings = {
@@ -159,6 +163,20 @@
 		path = /Applications/Aperture.app;
 		sourceTree = "<absolute>";
 	};
+	1AAA68F60EC0DE5600B13946 /* PBXBookmark */ = {
+		isa = PBXBookmark;
+		fRef = D15DEA4D0ABF63C600CBE3A5 /* enfuseEdit.m */;
+	};
+	1AAA68FD0EC0E35D00B13946 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D15DEA4D0ABF63C600CBE3A5 /* enfuseEdit.m */;
+		name = "enfuseEdit.m: 1051";
+		rLen = 0;
+		rLoc = 38112;
+		rType = 0;
+		vrLen = 1456;
+		vrLoc = 37092;
+	};
 	1AEDA15C0E8FE94E000A34EA /* Source Control */ = {
 		isa = PBXSourceControlManager;
 		fallbackIsa = XCSourceControlManager;
@@ -170,6 +188,14 @@
 	1AEDA15D0E8FE94E000A34EA /* Code sense */ = {
 		isa = PBXCodeSenseManager;
 		indexTemplatePath = "";
+	};
+	7111D3560EC07E6D006D679B /* alignStackTask.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1018, 2996}}";
+			sepNavSelRange = "{4605, 0}";
+			sepNavVisRect = "{{0, 2296}, {1018, 617}}";
+			sepNavWindowFrame = "{{366, 29}, {1057, 746}}";
+		};
 	};
 	8D5B49AC048680CD000E48DA /* enfuseEdit */ = {
 		activeExec = 0;
@@ -192,17 +218,17 @@
 	};
 	D15DEA4D0ABF63C600CBE3A5 /* enfuseEdit.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1148, 11004}}";
-			sepNavSelRange = "{163, 0}";
-			sepNavVisRect = "{{0, 0}, {1018, 617}}";
+			sepNavIntBoundsRect = "{{0, 0}, {1148, 16702}}";
+			sepNavSelRange = "{38112, 0}";
+			sepNavVisRect = "{{0, 14320}, {1018, 617}}";
 			sepNavWindowFrame = "{{228, 92}, {1057, 746}}";
 		};
 	};
 	D15DEA4E0ABF63C600CBE3A5 /* enfuseEdit.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {792, 1638}}";
-			sepNavSelRange = "{323, 0}";
-			sepNavVisRect = "{{0, 74}, {792, 164}}";
+			sepNavIntBoundsRect = "{{0, 0}, {1018, 2086}}";
+			sepNavSelRange = "{3574, 0}";
+			sepNavVisRect = "{{0, 1469}, {1018, 617}}";
 			sepNavWindowFrame = "{{306, 97}, {1057, 746}}";
 		};
 	};

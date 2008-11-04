@@ -636,8 +636,8 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
 	NSLog(@"%s",__PRETTY_FUNCTION__);
 	if (findRunning) {
 		NSLog(@"already running");
-		NSRunAlertPanel (NSLocalizedString(@"Error",@""),
-						 NSLocalizedString(@"Process already running",nil), NSLocalizedString(@"OK",nil), NULL, NULL);
+		//NSRunAlertPanel (NSLocalizedString(@"Error",@""),
+		//				 NSLocalizedString(@"Process already running",nil), NSLocalizedString(@"OK",nil), NULL, NULL);
 		findRunning = NO;
 		return;
 	   } else {
@@ -1059,7 +1059,7 @@ for (i = 0; i < count; i++) {
 			}
 		}
 		
-		[self openFile:[self outputfile]];
+		//not used [self openFile:[self outputfile]];
 	}
 	[mProgressText setStringValue:@""];
 	[mEnfuseButton setTitle:@"Enfuse"];

@@ -12,9 +12,7 @@
 		1A6965380E95606300FE9F6B /* TaskWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A6965370E95606300FE9F6B /* TaskWrapper.m */; };
 		1AAE75C20EA4531C00271EA0 /* general.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AAE75C00EA4531C00271EA0 /* general.png */; };
 		1AAE75C30EA4531C00271EA0 /* update.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 1AAE75C10EA4531C00271EA0 /* update.tiff */; };
-		7111D3610EC07F19006D679B /* ExportOptionsController.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 7111D35F0EC07F19006D679B /* ExportOptionsController.h */; };
 		7111D3620EC07F19006D679B /* ExportOptionsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7111D3600EC07F19006D679B /* ExportOptionsController.m */; };
-		7111D3F30EC084FF006D679B /* NSFileManager-Extensions.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 7111D3F10EC084FF006D679B /* NSFileManager-Extensions.h */; };
 		7111D3F40EC084FF006D679B /* NSFileManager-Extensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 7111D3F20EC084FF006D679B /* NSFileManager-Extensions.m */; };
 		7111D4500EC087E7006D679B /* alignStackTask.m in Sources */ = {isa = PBXBuildFile; fileRef = 7111D3560EC07E6D006D679B /* alignStackTask.m */; };
 		7111D4520EC0880B006D679B /* enfuseTask.m in Sources */ = {isa = PBXBuildFile; fileRef = 7111D3570EC07E6D006D679B /* enfuseTask.m */; };
@@ -34,8 +32,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 6;
 			files = (
-				7111D3610EC07F19006D679B /* ExportOptionsController.h in CopyFiles */,
-				7111D3F30EC084FF006D679B /* NSFileManager-Extensions.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

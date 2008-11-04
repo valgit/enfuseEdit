@@ -117,20 +117,21 @@
 - (IBAction)_cancelEditing:(id)sender;
 - (IBAction)_doneEditing:(id)sender;
 
-- (IBAction) about: (IBOutlet)sender;
+- (IBAction)about: (id)sender;
 - (IBAction)reset:(id)sender;
+- (IBAction)enfuse: (id)sender;
 
-- (IBAction) takeSaturation: (IBOutlet)sender;
-- (IBAction) takeContrast: (IBOutlet)sender;
-- (IBAction) takeExposure: (IBOutlet)sender;
+- (IBAction)takeSaturation: (id)sender;
+- (IBAction)takeContrast: (id)sender;
+- (IBAction)takeExposure: (id)sender;
 
-- (IBAction) takeSigma: (IBOutlet)sender;
-- (IBAction) takeMu: (IBOutlet)sender;
+- (IBAction)takeSigma: (id)sender;
+- (IBAction)takeMu: (id)sender;
 
 - (IBAction)openPreferences:(id)sender;
 
-- (IBAction) openPresets: (IBOutlet)sender;
-- (IBAction) savePresets: (IBOutlet)sender;
+- (IBAction)openPresets: (id)sender;
+- (IBAction)savePresets: (id)sender;
 
 -(NSString*)outputfile;
 -(void)setOutputfile:(NSString *)file;
