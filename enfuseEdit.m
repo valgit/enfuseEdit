@@ -415,7 +415,7 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
 	//kExportKeyEXIFProperties
 	
 	NSDictionary *exif = [properties objectForKey:kExportKeyEXIFProperties];
-	//NSLog(@"%s : exif are %@", __PRETTY_FUNCTION__, exif);
+	NSLog(@"%s : exif are %@", __PRETTY_FUNCTION__, exif);
 	if(exif) { /* kCGImagePropertyIPTCDictionary kCGImagePropertyExifAuxDictionary */
 		NSString *focalLengthStr, *fNumberStr, *exposureTimeStr,*exposureBiasStr;
 		//NSLog(@"the exif data is: %@", [exif description]);
@@ -694,7 +694,7 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
 			   [mProgressIndicator setUsesThreadedAnimation:YES];
 			   //[mProgressIndicator setIndeterminate:YES];
 			   [mProgressIndicator setDoubleValue:0.0];
-			   [mProgressIndicator setMaxValue:(1+23*[images count])]; // TOTO : add enfuse step ?
+			   [mProgressIndicator setMaxValue:(1+23* count /* [images count] */ )]; // TOTO : add enfuse step ?
 			   [mProgressIndicator startAnimation:self];
 			   [mProgressText setStringValue:@"Aligning..."];
 			   [aligntask setDelegate:self];

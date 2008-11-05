@@ -127,7 +127,7 @@
 
 - (void)appendOutput:(NSString *)output;
 {
-	NSLog(@"%s output is : [%@]",__PRETTY_FUNCTION__,output);
+	//NSLog(@"%s output is : [%@]",__PRETTY_FUNCTION__,output);
 	//[mProgressInfo setDisplayText:@""];
 	if ([output rangeOfString:@"loading"].location != NSNotFound) {
 		if (state != 1) {

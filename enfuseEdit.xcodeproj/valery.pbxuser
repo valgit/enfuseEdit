@@ -95,16 +95,30 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 247528921;
-			PBXWorkspaceStateSaveDate = 247528921;
+			PBXPerProjectTemplateStateSaveDate = 247561851;
+			PBXWorkspaceStateSaveDate = 247561851;
 		};
 		perUserProjectItems = {
-			1AA6FAA90EC0E5E100752C01 /* PBXTextBookmark */ = 1AA6FAA90EC0E5E100752C01 /* PBXTextBookmark */;
-			1AACDFE20EC1017E00DB5E79 /* PBXTextBookmark */ = 1AACDFE20EC1017E00DB5E79 /* PBXTextBookmark */;
+			1A4BE5930EC17EA1007A4E27 /* PBXBookmark */ = 1A4BE5930EC17EA1007A4E27 /* PBXBookmark */;
+			1A4BE5A30EC180EC007A4E27 /* PBXTextBookmark */ = 1A4BE5A30EC180EC007A4E27 /* PBXTextBookmark */;
 		};
 		sourceControlManager = 1AEDA15C0E8FE94E000A34EA /* Source Control */;
 		userBuildSettings = {
 		};
+	};
+	1A4BE5930EC17EA1007A4E27 /* PBXBookmark */ = {
+		isa = PBXBookmark;
+		fRef = D15DEA4D0ABF63C600CBE3A5 /* enfuseEdit.m */;
+	};
+	1A4BE5A30EC180EC007A4E27 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D15DEA4D0ABF63C600CBE3A5 /* enfuseEdit.m */;
+		name = "enfuseEdit.m: 418";
+		rLen = 0;
+		rLoc = 13465;
+		rType = 0;
+		vrLen = 2331;
+		vrLoc = 12227;
 	};
 	1A69652A0E95603800FE9F6B /* XCBreakpointsBucket */ = {
 		isa = XCBreakpointsBucket;
@@ -163,26 +177,6 @@
 		path = /Applications/Aperture.app;
 		sourceTree = "<absolute>";
 	};
-	1AA6FAA90EC0E5E100752C01 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D15DEA4D0ABF63C600CBE3A5 /* enfuseEdit.m */;
-		name = "enfuseEdit.m: 314";
-		rLen = 0;
-		rLoc = 9701;
-		rType = 0;
-		vrLen = 1362;
-		vrLoc = 10122;
-	};
-	1AACDFE20EC1017E00DB5E79 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D15DEA4D0ABF63C600CBE3A5 /* enfuseEdit.m */;
-		name = "enfuseEdit.m: 1053";
-		rLen = 0;
-		rLoc = 37735;
-		rType = 0;
-		vrLen = 1456;
-		vrLoc = 37143;
-	};
 	1AEDA15C0E8FE94E000A34EA /* Source Control */ = {
 		isa = PBXSourceControlManager;
 		fallbackIsa = XCSourceControlManager;
@@ -198,8 +192,8 @@
 	7111D3560EC07E6D006D679B /* alignStackTask.m */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {1018, 2996}}";
-			sepNavSelRange = "{4605, 0}";
-			sepNavVisRect = "{{0, 2296}, {1018, 617}}";
+			sepNavSelRange = "{2570, 0}";
+			sepNavVisRect = "{{0, 2204}, {1018, 617}}";
 			sepNavWindowFrame = "{{366, 29}, {1057, 746}}";
 		};
 	};
@@ -225,8 +219,8 @@
 	D15DEA4D0ABF63C600CBE3A5 /* enfuseEdit.m */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {1148, 17164}}";
-			sepNavSelRange = "{37735, 0}";
-			sepNavVisRect = "{{0, 14449}, {1018, 617}}";
+			sepNavSelRange = "{13465, 0}";
+			sepNavVisRect = "{{0, 5452}, {1018, 617}}";
 			sepNavWindowFrame = "{{228, 92}, {1057, 746}}";
 		};
 	};
