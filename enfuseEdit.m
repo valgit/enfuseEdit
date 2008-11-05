@@ -20,6 +20,14 @@
 -(NSString *)initTempDirectory;
 -(void)cleanuptempdir;
 
+-(BOOL)checkApplicationPath;
+
+// handle Exif
+-(void)copyExifFrom:(NSString*)sourcePath to:(NSString*)outputfile with:(NSString*)tempfile;
+
+// handle presets 
+- (NSData *) dataOfType: (NSString *) typeName;
+- (BOOL) readFromData: (NSData *) data ofType: (NSString *) typeName;
 @end
 
 @implementation enfuseEdit
@@ -46,7 +54,7 @@
         // Finish your initialization here
         NSLog(@"%s",__PRETTY_FUNCTION__);
         // Create the array we'll use to hold the paths to our images
-        images = [[NSMutableArray alloc] init];
+        //test images = [[NSMutableArray alloc] init];
         // allocate the cache ...
         _cacheImagesInfos = [[NSMutableDictionary alloc] init];
         // task ...
@@ -64,7 +72,7 @@
 
 - (void)dealloc
 {
-    [images release];
+    //test [images release];
 
     if (aligntask != nil)
         [aligntask release];
@@ -86,19 +94,6 @@
     [_editManager release];
 
     [super dealloc];
-}
-
-// maybe store some default ?
-+ (void)initialize
-{
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSDictionary *appDefaults = [NSDictionary dictionaryWithObjectsAndKeys:
-    @"YES", @"useCIECAM",
-        @"default", @"cachesize",
-        @"default", @"blocksize",
-        nil];
-
-    [defaults registerDefaults:appDefaults];
 }
 
 // when first launched, this routine is called when all objects are created
@@ -137,35 +132,14 @@
         }
         [myNib release];
 
-        //NSBundle *myBundle = [NSBundle bundleForClass:[self class]];
-        //_enfusePath = [[NSString stringWithFormat:@"%@%@",[[myBundle infoDictionary] objectForKey:@"NSBundleResolvedPath"],
-        //	@"/Contents/MacOS/enfuse"] retain];
+		BOOL pathok = [self checkApplicationPath];
+		if (!pathok) {
+			 NSRunAlertPanel (NSLocalizedString(@"Installation Error",@""),
+						@"", NSLocalizedString(@"OK",nil), NULL, NULL);
+			[self cleanuptempdir];
 
-        //NSLog(@"%s path is : %@",__PRETTY_FUNCTION__,_enfusePath);
-
-        #if 1                                     // not quit good for plugin !
-        NSString *path = [NSString stringWithFormat:@"%@%@",[myBundle resourcePath],
-            @"/align_image_stack"];
-        NSLog(@"%s path is : %@",__PRETTY_FUNCTION__,path);
-        // check for enfuse binaries...
-        if([[NSFileManager defaultManager] isExecutableFileAtPath:path]==NO) {
-            NSString *alert = [path stringByAppendingString: @" is not executable!"];
-            NSRunAlertPanel (NULL, alert, @"OK", NULL, NULL);
-            [NSApp terminate:nil];
-        }
-
-        path = [NSString stringWithFormat:@"%@%@",[myBundle resourcePath],
-            @"/enfuse"];
-        NSLog(@"%s path is : %@",__PRETTY_FUNCTION__,path);
-
-        // check for enfuse binaries...
-        if([[NSFileManager defaultManager] isExecutableFileAtPath:path]==NO) {
-            NSString *alert = [path stringByAppendingString: @" is not executable!"];
-            NSRunAlertPanel (NULL, alert, @"OK", NULL, NULL);
-            [NSApp terminate:nil];
-        }
-        #endif
-
+			[_editManager endEditSession];
+		}
     }
 
     return _editWindow;
@@ -214,6 +188,7 @@
         //[images addObject:newImage];
     }
     #endif
+	[self getDefaults];
 }
 
 - (void)editManager:(id<ApertureEditManager>)editManager didImportImageAtPath:(NSString *)path versionUniqueID:(NSString *)versionUniqueID
@@ -406,26 +381,31 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
     //NSLog(@"%s : exif are %@", __PRETTY_FUNCTION__, exif);
     if(exif) {                                    /* kCGImagePropertyIPTCDictionary kCGImagePropertyExifAuxDictionary */
         NSString *focalLengthStr, *fNumberStr, *exposureTimeStr,*exposureBiasStr;
-        //NSLog(@"the exif data is: %@", [exif description]);
+        NSLog(@"the exif data is: %@", [exif description]);
         NSNumber *focalLengthObj = [exif objectForKey:(NSString *)kCGImagePropertyExifFocalLength];
         if (focalLengthObj) {
-            focalLengthStr = [NSString stringWithFormat:@"%@mm", [focalLengthObj stringValue]];
+            focalLengthStr = [NSString stringWithFormat:@"Focal Length: %@mm", [focalLengthObj stringValue]];
         } else focalLengthStr = @"";
-        NSNumber *fNumberObj = [exif objectForKey:(NSString *)kCGImagePropertyExifFNumber];
+        NSNumber *fNumberObj = [exif objectForKey:(NSString *)kCGImagePropertyExifApertureValue /* kCGImagePropertyExifFNumber */ ];
         if (fNumberObj) {
-            fNumberStr = [NSString stringWithFormat:@"F%@", [fNumberObj stringValue]];
+            fNumberStr = [NSString stringWithFormat:@"Aperture: F%@", [fNumberObj stringValue]];
         } else fNumberStr = @"--";
-        NSNumber *exposureTimeObj = (NSNumber *)[exif objectForKey:(NSString *)kCGImagePropertyExifExposureTime];
-        if (exposureTimeObj) {
-            exposureTimeStr = [NSString stringWithFormat:@"1/%.0f", (1/[exposureTimeObj floatValue])];
+        NSNumber *exposureTimeObj = (NSNumber *)[exif objectForKey:@"ShutterSpeed" /* (NSString *)kCGImagePropertyExifExposureTime*/];
+        //NSLog(@"%s : exif speed %@", __PRETTY_FUNCTION__, exposureTimeObj);  /* ShutterSpeed */
+		if (exposureTimeObj) {
+			if ([exposureTimeObj floatValue] < 1.0)
+				exposureTimeStr = [NSString stringWithFormat:@"Shutter Speed : 1/%.1f s", (1. / [exposureTimeObj floatValue])];
+			else
+				exposureTimeStr = [NSString stringWithFormat:@"Shutter Speed : %.1f s", ([exposureTimeObj floatValue])];
         } else exposureTimeStr = @"--";
-        NSNumber *exposureBiasObj = (NSNumber *)[exif objectForKey:(NSString *)kCGImagePropertyExifExposureBiasValue];
-        if (exposureBiasObj) {
-            exposureBiasStr = [NSString stringWithFormat:@"Bias:%@", [exposureBiasObj stringValue]];
+        NSNumber *exposureBiasObj = (NSNumber *)[exif objectForKey:@"ExposureBiasValue" /* (NSString *)kCGImagePropertyExifExposureBiasValue*/]; /* ExposureBiasValue */
+        //NSLog(@"%s : exif bias %@", __PRETTY_FUNCTION__, exposureBiasObj);
+		if (exposureBiasObj) {
+            exposureBiasStr = [NSString stringWithFormat:@"Exposure Comp. : %+0.1f EV", [exposureBiasObj floatValue]];
         } else exposureBiasStr = @"--";
 
-        text = [NSString stringWithFormat:@"%@\n%@ / %@ @ %@", exportName,
-            focalLengthStr,exposureTimeStr,fNumberStr];
+        text = [NSString stringWithFormat:@"%@\n%@\n%@\n%@\n%@", exportName,
+            focalLengthStr,exposureTimeStr,fNumberStr, exposureBiasStr];
     }                                             /* kCGImagePropertyExifFocalLength kCGImagePropertyExifExposureTime kCGImagePropertyExifExposureTime */
     /* kCGImagePropertyExifApertureValue kCGImagePropertyExifShutterSpeedValue */
     else {
@@ -444,19 +424,19 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
 -(void)insertObject:(id)obj inImagesAtIndex:(unsigned)index;
 {
     NSLog(@"%s obj is : %@",__PRETTY_FUNCTION__,obj);
-    [images insertObject: obj  atIndex: index];
+    //test [images insertObject: obj  atIndex: index];
 }
 
 -(void)removeObjectFromImagesAtIndex:(unsigned)index;
 {
     NSLog(@"%s",__PRETTY_FUNCTION__);
-    [images removeObjectAtIndex: index];
+    //test [images removeObjectAtIndex: index];
 }
 
 -(void)replaceObjectInImagesAtIndex:(unsigned)index withObject:(id)obj;
 {
     NSLog(@"%s",__PRETTY_FUNCTION__);
-    [images replaceObjectAtIndex: index withObject: obj];
+    //test [images replaceObjectAtIndex: index withObject: obj];
 }
 
 #pragma mark -
@@ -482,7 +462,7 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
     [self takeSigma:mSigmaSlider];
 }
 
-- (IBAction) about: (IBOutlet)sender;
+- (IBAction) about: (id)sender;
 {
     NSLog(@"%s",__PRETTY_FUNCTION__);
     #if 0
@@ -497,10 +477,11 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
     }
     [infoPanel makeKeyAndOrderFront:nil];
     #endif
-
+	BOOL openResult;
+	openResult = [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"http://vald70.free.fr/" ] ];
 }
 
-- (IBAction) takeSaturation: (IBOutlet)sender;
+- (IBAction) takeSaturation: (id)sender;
 {
     //NSLog(@"%s",__PRETTY_FUNCTION__);
     float theValue = [sender floatValue];
@@ -509,7 +490,7 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
     [mSaturationSlider setFloatValue:theValue];
 }
 
-- (IBAction) takeContrast: (IBOutlet)sender;
+- (IBAction) takeContrast: (id)sender;
 {
     //NSLog(@"%s",__PRETTY_FUNCTION__);
     float theValue = [sender floatValue];
@@ -518,7 +499,7 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
     [mContrastSlider setFloatValue:theValue];
 }
 
-- (IBAction) takeExposure: (IBOutlet)sender;
+- (IBAction) takeExposure: (id)sender;
 {
     //NSLog(@"%s",__PRETTY_FUNCTION__);
     float theValue = [sender floatValue];
@@ -527,7 +508,7 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
     [mExposureSlider setFloatValue:theValue];
 }
 
-- (IBAction) takeSigma: (IBOutlet)sender;
+- (IBAction) takeSigma: (id)sender;
 {
     //NSLog(@"%s",__PRETTY_FUNCTION__);
     float theValue = [sender floatValue];
@@ -536,7 +517,7 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
     [mSigmaSlider setFloatValue:theValue];
 }
 
-- (IBAction) takeMu: (IBOutlet)sender;
+- (IBAction) takeMu: (id)sender;
 {
     //NSLog(@"%s",__PRETTY_FUNCTION__);
     float theValue = [sender floatValue];
@@ -641,6 +622,11 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
         return;
     }
     else {
+		if (![self checkApplicationPath]) {
+			NSRunAlertPanel (NSLocalizedString(@"Error",@""),
+        				 NSLocalizedString(@"Installation Error",nil), NSLocalizedString(@"OK",nil), NULL, NULL);
+			return;
+		}
         findRunning = YES;
         if (aligntask != nil) {
             NSLog(@"%s need to cleanup autoalign ?",__PRETTY_FUNCTION__);
@@ -685,7 +671,7 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
             //[mProgressIndicator setIndeterminate:YES];
             [mProgressIndicator setDoubleValue:0.0];
                                                   // TOTO : add enfuse step ?
-            [mProgressIndicator setMaxValue:(1+23* [selft countOfImages] )];
+            [mProgressIndicator setMaxValue:(1+23* [self countOfImages] )];
             [mProgressIndicator startAnimation:self];
             [mProgressText setStringValue:@"Aligning..."];
             [aligntask setDelegate:self];
@@ -718,8 +704,8 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
     // create the output file name  kExportKeyReferencedMasterPath kExportKeyVersionName
     //
     NSString *filename;
-    #if 0
-    file = [images objectAtIndex:0];
+    #if 1
+    file = [self objectInImagesAtIndex:0];
     if (file != nil) {
         filename = [[file valueForKey:@"file"] lastPathComponent ];
     }
@@ -846,156 +832,6 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
     return;                                       // testing !
 }
 
-- (void)runEnfuse
-{
-    // If the task is still sitting around from the last run, release it
-    //if (enfuseTask!=nil)
-    //  [enfuseTask release];
-    // Let's allocate memory for and initialize a new TaskWrapper object, passing
-    // in ourselves as the controller for this TaskWrapper object, the path
-    // to the command-line tool, and the contents of the text field that
-    // displays what the user wants to search on
-    NSMutableArray *args = [NSMutableArray array];
-
-    NSString *filename = @"";                     // TODO [[mInputFile stringValue] lastPathComponent];
-    //NSString *extension = [[filename pathExtension] lowercaseString];
-    //NSLog(filename);
-    NSString* outputfile;
-
-    switch ([[mOutputType selectedCell] tag]) {
-        case 0 :                                  /* absolute */
-                                                  /*[mOuputFile stringValue]*/
-            outputfile = [ [useroptions valueForKey:@"exportDirectory"]
-                stringByAppendingPathComponent:[[NSFileManager defaultManager] nextUniqueNameUsing:[mOutFile stringValue]
-                withFormat:"tiff"                 /*[[mOutFormat titleOfSelectedItem] lowercaseString]*/
-            appending:[mAppendTo stringValue] ]];
-            break;
-        case 1:                                   /* append */
-                                                  /*[mOuputFile stringValue]*/
-            outputfile = [[useroptions valueForKey:@"exportDirectory"]
-                stringByAppendingPathComponent:[[NSFileManager defaultManager] nextUniqueNameUsing:filename
-                withFormat:@"tiff"                /*[[mOutFormat titleOfSelectedItem] lowercaseString]*/
-                appending:[mAppendTo stringValue] ]];
-            break;
-        default:
-            NSLog(@"bad selected tag is %d",[[mOutputType selectedCell] tag]);
-    }
-
-    [self setOutputfile:outputfile];
-    [self setTempfile:[[NSFileManager defaultManager] tempfilename:"tiff" /*[[mOutFormat titleOfSelectedItem] lowercaseString]*/]];
-    NSLog(@"files are : (%@) %@,%@",outputfile,[self outputfile],[self tempfile]);
-
-    #ifndef GNUSTEP
-    NSString *path = [NSString stringWithFormat:@"%@%@",[[NSBundle mainBundle] bundlePath],
-        @"/enfuse/enfuse"];
-    //[[ NSBundle mainBundle ] pathForAuxiliaryExecutable: @"greycstoration"];
-    //NSLog(@"path is %@ -> %@",path,[[ NSBundle mainBundle ] bundlePath]);
-    //[args addObject:[ [ NSBundle mainBundle ] pathForAuxiliaryExecutable: @"greycstoration" ]];
-    [args addObject:path];
-    //[args addObject:@"/Users/vbr/Source/CImg-1.2.9/examples/greycstoration"];
-    // NSString *pathToFfmpeg = [NSString stringWithFormat:@"%@%@",[[NSBundle mainBundle] resourcePath],@"/ffmpeg"];
-    #else
-    [args addObject:@"./enfuse"];
-    #endif
-    // for debug ? [args addObject:@"-v"]; // be a little bit verbose ?
-
-    //[args addObject:@"greycstoration"];
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    //NSLog(@"icc : %@",[defaults boolForKey:@"useCIECAM02"]);
-    if ([defaults boolForKey:@"useCIECAM"]) {     // ICC profile
-        //NSLog(@"%s use ICC !",__PRETTY_FUNCTION__);
-        [args addObject:@"-c"];
-    }
-
-    NSString *cachesize = [defaults stringForKey:@"cachesize"];
-    if (![cachesize isEqualToString:@"default" ]) {
-        [args addObject:@"-m"];
-        [args addObject:cachesize];
-    }
-    NSString *blocksize = [defaults stringForKey:@"blocksize"];
-    if (![blocksize isEqualToString:@"default" ]) {
-        [args addObject:@"-b"];
-        [args addObject:blocksize];
-    }
-
-    [args addObject:@"-o"];
-    [args addObject:[self tempfile]];
-
-    //[args addObject:@"-restore"];
-    //[args addObject:[mInputFile stringValue]];
-    NSDictionary* obj=nil;
-    NSEnumerator *enumerator = [images objectEnumerator];
-
-    while ( nil != (obj = [enumerator nextObject]) ) {
-        if ([[obj valueForKey:@"enable"] boolValue]) {
-            //NSLog(@"add enable : %@",[obj valueForKey:@"text"]);
-                                                  // TODO : better !
-            [args addObject:[obj valueForKey:@"file"]];
-        }
-    }
-
-    #if 0
-    //NSLog(@"info jpeg : %@",[mOutQuality stringValue]);
-    if ([[mOutFormat titleOfSelectedItem] isEqualToString:@"JPEG"] ) {
-        [args addObject:[NSString stringWithFormat:@"--compression=%@",[mOutQuality stringValue]]];
-    }
-    else if ([[mOutFormat titleOfSelectedItem] isEqualToString:@"TIFF"] ) {
-        [args addObject:@"--compression=LZW"];    // if jpeg !
-    }
-    #else
-    [args addObject:@"--compression=LZW"];        // if jpeg !
-    #endif
-
-    [args addObject:[NSString stringWithFormat:@"--wExposure=%@",[mExposureSlider stringValue]]];
-    [args addObject:[NSString stringWithFormat:@"--wSaturation=%@",[mSaturationSlider stringValue]]];
-    [args addObject:[NSString stringWithFormat:@"--wContrast=%@",[mContrastSlider stringValue]]];
-
-    [args addObject:[NSString stringWithFormat:@"--wMu=%@",[mMuSlider stringValue]]];
-    [args addObject:[NSString stringWithFormat:@"--wSigma=%@",[mSigmaSlider stringValue]]];
-
-    [mProgressIndicator setDoubleValue:0.0];
-    [mProgressIndicator setMaxValue:(1+4*[images count])];
-
-    //enfuseTask=[[TaskWrapper alloc] initWithController:self arguments:args];
-    // kick off the process asynchronously
-    //[enfuseTask startProcess];
-}
-
-#if 0
-NSString *outputfile = NSHomeDirectory();
-outputfile = [outputfile stringByAppendingPathComponent:@"Pictures"];
-NSString *tempString = [[NSProcessInfo processInfo] globallyUniqueString];
-outputfile = [outputfile stringByAppendingPathComponent:tempString];
-                                                  // TODO
-[self setOutputfile:[NSString stringWithFormat:@"%@.%@",outputfile,@"tiff"]];
-
-NSLog(@"%s check edit count :%d",__PRETTY_FUNCTION__,[[_editManager editableVersionIds]  count] );
-//int i, count = [[_editManager selectedVersionIds] count];
-//NSLog(@"%s adding selected : %d",__PRETTY_FUNCTION__,count);
-// Tell Aperture to make an editable version of these images. If this version is already editable, this method won't generate a new version
-// but will still return the appropriate properties.
-// format ? requestedFormat:kApertureImageFormatTIFF8
-NSArray *properties = [_editManager editableVersionsOfVersions:[_editManager selectedVersionIds] stackWithOriginal:YES];
-//NSLog(@"%s editables propos are : << %@ >>",__PRETTY_FUNCTION__,properties);
-
-int i, count = [[_editManager editableVersionIds]  count];
-NSLog(@"%s edit count :%d",__PRETTY_FUNCTION__,count );
-
-for (i = 0; i < count; i++)
-{
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-
-    //NSDictionary *imageProperties = [properties objectAtIndex:0];
-    //    Get the path to the editable version
-    NSString *editableVersionId = [[_editManager editableVersionIds] objectAtIndex:i];
-    NSLog(@"%s edit %@",__PRETTY_FUNCTION__,editableVersionId);
-    NSString *imagePath = [_editManager pathOfEditableFileForVersion:editableVersionId];
-    [args addObject:imagePath];
-    //NSLog(@"%s : %@ %@ %@ %@",__PRETTY_FUNCTION__,
-    //	versionID,editableVersionId,imagePath,path);
-    [pool release];
-}
-#endif
 
 #pragma mark -
 #pragma mark TaskWrapper
@@ -1049,7 +885,7 @@ for (i = 0; i < count; i++)
     if (status  == 0 && canceled != YES) {
         if([mCopyMeta state]==NSOnState) {
             [mProgressText setStringValue:@"Copying Exif values..."];
-            [self copyExifFrom:[[images objectAtIndex:0] valueForKey:@"file"]
+            [self copyExifFrom:[[self objectInImagesAtIndex:0] valueForKey:@"file"]
                 to:[self outputfile] with:[enfusetask outputfile]];
         }
         else {
@@ -1121,7 +957,7 @@ for (i = 0; i < count; i++)
 -(NSString *)initTempDirectory;
 {
     // Create our temporary directory
-    NSString* tempDirectoryPath = [NSString stringWithFormat:@"%@/enfuseEdiI",
+    NSString* tempDirectoryPath = [NSString stringWithFormat:@"%@/enfuseEdit",
         NSTemporaryDirectory()];
 
     // If it doesn't exist, create it
@@ -1190,30 +1026,188 @@ for (i = 0; i < count; i++)
     [mAppendTo setStringValue:[_editManager userDefaultsObjectForKey:@"outputAppendTo"]];
     [mOutQuality setStringValue:[_editManager userDefaultsObjectForKey:@"outputQuality"]];
     #endif
+	
+	[useroptions setValue:[_editManager userDefaultsObjectForKey:@"addKeyword"]
+        forKey:@"addKeyword"];
+    [useroptions setValue:[_editManager userDefaultsObjectForKey:@"importInAperture"]
+        forKey:@"importInAperture"];
+    [useroptions setValue:[_editManager userDefaultsObjectForKey:@"stackWithOriginal"]
+        forKey:@"stackWithOriginal"];
+    if ( [[useroptions valueForKey:@"addKeyword"] boolValue] )
+        [useroptions setObject:[_editManager userDefaultsObjectForKey:@"keyword"]
+        forKey:@"keyword"];
+    else
+        [useroptions removeObjectForKey:@"keyword"];
 }
 
 -(void)cleanuptempdir;
 {
     NSFileManager *defaultManager = [NSFileManager defaultManager];
     NSLog(@"%s",__PRETTY_FUNCTION__);
-    //NSData* data = [self dataOfType:@"xml"];
-    //[data writeToFile:@"/tmp/test.xml" atomically:YES ];
-    NSDictionary* obj=nil;
-    NSEnumerator *enumerator = [images objectEnumerator];
-
-    while ( nil != (obj = [enumerator nextObject]) ) {
-        //NSLog(@"removing : %@",[obj valueForKey:@"thumbfile"]);
-        [defaultManager removeFileAtPath:[obj valueForKey:@"thumbfile"] handler:self];
-    }
+    
     NSString *filename;
-    enumerator = [[defaultManager directoryContentsAtPath: [self temppath] ] objectEnumerator];
-    while (nil != (filename = [enumerator nextObject]) ) {
+    NSEnumerator* enumerator = [[defaultManager directoryContentsAtPath: [self temppath] ] objectEnumerator];
+    
+	while (nil != (filename = [enumerator nextObject]) ) {
         //NSLog(@"file : %@",[filename lastPathComponent]);
         if ([[filename lastPathComponent] hasPrefix:@"align"]) {
             [defaultManager removeFileAtPath:[NSString stringWithFormat:@"%@/%@",[self temppath],filename] handler:self];
         }
     }
-
+	[self setDefaults];
 }
+
+-(BOOL)checkApplicationPath;
+{
+	NSBundle *myBundle = [NSBundle bundleForClass:[self class]];
+    
+        NSString *path = [NSString stringWithFormat:@"%@%@",[myBundle resourcePath],
+            @"/align_image_stack"];
+        NSLog(@"%s path is : %@",__PRETTY_FUNCTION__,path);
+        // check for enfuse binaries...
+        if([[NSFileManager defaultManager] isExecutableFileAtPath:path]==NO) {
+            NSString *alert = [path stringByAppendingString: @" is not executable!"];
+            NSRunAlertPanel (NULL, alert, @"OK", NULL, NULL);
+            return NO;
+        }
+
+        path = [NSString stringWithFormat:@"%@%@",[myBundle resourcePath],
+            @"/enfuse"];
+        NSLog(@"%s path is : %@",__PRETTY_FUNCTION__,path);
+
+        // check for enfuse binaries...
+        if([[NSFileManager defaultManager] isExecutableFileAtPath:path]==NO) {
+            NSString *alert = [path stringByAppendingString: @" is not executable!"];
+            NSRunAlertPanel (NULL, alert, @"OK", NULL, NULL);
+            return NO;
+        }
+    return YES;
+}
+
+-(void)copyExifFrom:(NSString*)sourcePath to:(NSString*)outputfile with:(NSString*)tempfile;
+{
+	NSMutableDictionary* newExif;
+	NSLog(@"%s from:%@ to:%@",__PRETTY_FUNCTION__,sourcePath,outputfile);
+	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+#ifndef GNUSTEP
+	
+	// create the source 
+	NSURL *_url = [NSURL fileURLWithPath:sourcePath]; // for exif
+	NSURL *_outurl = [NSURL fileURLWithPath:outputfile]; // dest
+	NSURL *_tmpurl = [NSURL fileURLWithPath:tempfile]; // for image
+	CGImageSourceRef exifsrc = CGImageSourceCreateWithURL((CFURLRef)_url, NULL);
+	CGImageSourceRef source = CGImageSourceCreateWithURL((CFURLRef)_tmpurl, NULL);
+	if(source != nil) {
+		// get Exif from source?
+		NSDictionary* properties = (NSDictionary *)CGImageSourceCopyPropertiesAtIndex(exifsrc, 0, NULL);
+		//NSLog(@"props: %@", [(NSDictionary *)properties description]);
+		NSDictionary *exif = (NSDictionary *)[properties objectForKey:(NSString *)kCGImagePropertyExifDictionary];
+		if(exif) { /* kCGImagePropertyIPTCDictionary kCGImagePropertyExifAuxDictionary */
+			//NSLog(@"the exif data is: %@", [exif description]);
+			newExif = [NSMutableDictionary dictionaryWithDictionary:exif];
+
+			if ([mCopyShutter state]==NSOnState) {
+				NSLog(@"%s removing shutter speed",__PRETTY_FUNCTION__);
+				[newExif removeObjectForKey:(NSString *)kCGImagePropertyExifExposureTime];
+			}
+			if ([mCopyAperture state]==NSOnState) {
+				NSLog(@"%s removing aperture",__PRETTY_FUNCTION__);
+				[newExif removeObjectForKey:(NSString *)kCGImagePropertyExifFNumber];
+			}
+			if ([mCopyFocal state]==NSOnState) {
+				NSLog(@"%s removing focal length",__PRETTY_FUNCTION__);
+				[newExif removeObjectForKey:(NSString *)kCGImagePropertyExifFocalLength];
+			}
+		} /* kCGImagePropertyExifFocalLength kCGImagePropertyExifExposureTime kCGImagePropertyExifExposureTime */
+		
+		// create the destination
+		CGImageDestinationRef destination = CGImageDestinationCreateWithURL((CFURLRef)_outurl,
+				CGImageSourceGetType(source),
+				CGImageSourceGetCount(source),
+				NULL);
+	
+		//CGImageDestinationSetProperties(destination, (CFDictionaryRef)exif);	
+		
+
+		// copy data from temporary image ...
+		int imageCount = CGImageSourceGetCount(source);
+		int i;
+		for (i = 0; i < imageCount; i++) {
+				//NSLog(@"imgs  : %d",i);
+				CGImageDestinationAddImageFromSource(destination,
+						     source,
+						     i,
+						     (CFDictionaryRef)newExif);
+		}
+    
+		CGImageDestinationFinalize(destination);
+    
+		CFRelease(destination);
+		CFRelease(source); 
+		CFRelease(properties);
+		CFRelease(exifsrc); 
+	} else {
+		NSRunInformationalAlertPanel(@"Copying Exif error!",
+									 @"Unable to add Exif to Image.",
+									 @"OK",
+									 nil,
+									 nil,
+									 nil);
+	}
+	NSFileManager *fm = [NSFileManager defaultManager];
+    if ([fm fileExistsAtPath:(tempfile)]){
+		[fm removeFileAtPath:tempfile handler:self];
+	}
+#else
+	NSFileManager *fm = [NSFileManager defaultManager];
+        if ([fm fileExistsAtPath:(tempfile)]){
+              BOOL result = [fm movePath:tempfile toPath:outputfile handler:nil];
+        } else {
+              NSString *alert = [tempfile stringByAppendingString: @" do not exist!\nCan't rename"];
+              NSRunAlertPanel (NSLocalizedString(@"Fatal Error",@""), alert, @"OK", NULL, NULL);
+        }
+#endif
+	[pool release];
+}
+
+// saving ?
+- (NSData *) dataOfType: (NSString *) typeName
+{
+
+    NSMutableData *data = [[NSMutableData alloc] init];
+
+    NSKeyedArchiver *archiver;
+    archiver = [[NSKeyedArchiver alloc]
+                   initForWritingWithMutableData: data];
+    [archiver setOutputFormat: NSPropertyListXMLFormat_v1_0];
+
+    [archiver encodeDouble: [mContrastSlider doubleValue]  forKey: @"contrast"];
+    [archiver encodeDouble: [mExposureSlider doubleValue]  forKey: @"exposure"];
+    [archiver encodeDouble: [mSaturationSlider doubleValue]  forKey: @"saturation"];
+
+    [archiver encodeDouble: [mMuSlider doubleValue]  forKey: @"mu"];
+    [archiver encodeDouble: [mSigmaSlider doubleValue]  forKey: @"sigma"];
+
+    [archiver encodeDouble: [mContrastWindowSizeTextField doubleValue]  forKey: @"windowsize"];
+    [archiver encodeDouble: [mMinCurvatureTextField doubleValue]  forKey: @"mincurvature"];
+
+    [archiver finishEncoding];
+
+    return ([data autorelease]);
+
+} 
+
+- (BOOL) readFromData: (NSData *) data
+              ofType: (NSString *) typeName
+{
+    NSKeyedUnarchiver *archiver;
+    archiver = [[NSKeyedUnarchiver alloc]
+                   initForReadingWithData: data];
+
+    //stitches = [archiver decodeObjectForKey: @"stitches"];
+
+    return (YES);
+
+} 
 
 @end

@@ -91,7 +91,7 @@
 	 IBOutlet ExportOptionsController* exportOptionsSheetController;
 	
 	@private
-	NSMutableArray *images;
+	//test : NSMutableArray *images;
 
 	// Tracking images that Aperture writes to disk
 	//NSMutableArray *exportedImagePaths;	
@@ -142,7 +142,6 @@
 
 
 -(void)alignFinish:(int)status;
-- (void)runEnfuse;
 - (void)doEnfuse;
 
 @end
