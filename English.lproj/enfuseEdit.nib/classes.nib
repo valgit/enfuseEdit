@@ -5,6 +5,7 @@
                 "_cancelEditing" = id; 
                 "_doneEditing" = id; 
                 about = id; 
+                cancel = id; 
                 enfuse = id; 
                 openPreferences = id; 
                 openPresets = id; 
@@ -53,6 +54,7 @@
                 mOutputQualitySlider = NSSlider; 
                 mOutputType = NSMatrix; 
                 mProgressIndicator = NSProgressIndicator; 
+                mProgressPanel = NSPanel; 
                 mProgressText = NSTextField; 
                 mSaturationSlider = NSSlider; 
                 mSaturationStepper = NSStepper; 

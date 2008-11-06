@@ -23,7 +23,7 @@
 -(BOOL)checkApplicationPath;
 
 // handle Exif
--(void)copyExifFrom:(NSString*)sourcePath to:(NSString*)outputfile with:(NSString*)tempfile;
+-(void)copyExifFrom:(int)index to:(NSString*)outputfile with:(NSString*)tempfile;
 
 // handle presets 
 - (NSData *) dataOfType: (NSString *) typeName;
@@ -381,7 +381,7 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
     //NSLog(@"%s : exif are %@", __PRETTY_FUNCTION__, exif);
     if(exif) {                                    /* kCGImagePropertyIPTCDictionary kCGImagePropertyExifAuxDictionary */
         NSString *focalLengthStr, *fNumberStr, *exposureTimeStr,*exposureBiasStr;
-        NSLog(@"the exif data is: %@", [exif description]);
+        //NSLog(@"the exif data is: %@", [exif description]);
         NSNumber *focalLengthObj = [exif objectForKey:(NSString *)kCGImagePropertyExifFocalLength];
         if (focalLengthObj) {
             focalLengthStr = [NSString stringWithFormat:@"Focal Length: %@mm", [focalLengthObj stringValue]];
@@ -611,6 +611,13 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
     [exportOptionsSheetController runSheet:[_editManager apertureWindow] selector:@selector(preferencesSaving:) target:self];
 }
 
+- (IBAction)cancel:(id)sender
+{
+	NSLog(@"%s",__PRETTY_FUNCTION__);
+	[ NSApp stopModal ];
+	findRunning = NO;
+}
+
 - (IBAction) enfuse: (id)sender;
 {
     NSLog(@"%s",__PRETTY_FUNCTION__);
@@ -684,7 +691,16 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
             //[mProgressIndicator setIndeterminate:NO];
             // for now !
             //[mEnfuseButton setEnabled:NO];
-            [mEnfuseButton setTitle:@"Cancel"];
+			
+			// show the progress sheet
+			[ NSApp beginSheet: mProgressPanel 
+				modalForWindow: [_editManager apertureWindow] modalDelegate: nil
+				didEndSelector: nil contextInfo: nil ];
+			[ NSApp runModalForWindow: mProgressPanel ];
+			[ NSApp endSheet: mProgressPanel ];
+			[ mProgressPanel orderOut: self ];
+			
+            //[mEnfuseButton setTitle:@"Cancel"];
             return;                               // testing !
         }
         else {
@@ -828,7 +844,16 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
         withObject:nil];
 
     //[mEnfuseButton setEnabled:NO];
-    [mEnfuseButton setTitle:@"Cancel"];
+	
+	// show the progress sheet
+	[ NSApp beginSheet: mProgressPanel 
+		modalForWindow: [_editManager apertureWindow] modalDelegate: nil
+		didEndSelector: nil contextInfo: nil ];
+				[ NSApp runModalForWindow: mProgressPanel ];
+				[ NSApp endSheet: mProgressPanel ];
+				[ mProgressPanel orderOut: self ];
+				
+    //[mEnfuseButton setTitle:@"Cancel"];
     return;                                       // testing !
 }
 
@@ -866,6 +891,7 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
         [mEnfuseButton setTitle:@"Enfuse"];
         // [mEnfuseButton setEnabled:YES];
     }
+	[ NSApp stopModal ];
 }
 
 //
@@ -885,7 +911,7 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
     if (status  == 0 && canceled != YES) {
         if([mCopyMeta state]==NSOnState) {
             [mProgressText setStringValue:@"Copying Exif values..."];
-            [self copyExifFrom:[[self objectInImagesAtIndex:0] valueForKey:@"file"]
+            [self copyExifFrom:0 
                 to:[self outputfile] with:[enfusetask outputfile]];
         }
         else {
@@ -909,6 +935,7 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
     [mProgressText setStringValue:@""];
     [mEnfuseButton setTitle:@"Enfuse"];
     //[mEnfuseButton setEnabled:YES];
+	[ NSApp stopModal ];
 }
 
 -(NSString*)outputfile;
@@ -1084,28 +1111,46 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
     return YES;
 }
 
--(void)copyExifFrom:(NSString*)sourcePath to:(NSString*)outputfile with:(NSString*)tempfile;
+-(void)copyExifFrom:(int)index to:(NSString*)outputfile with:(NSString*)tempfile;
 {
-	NSMutableDictionary* newExif;
-	NSLog(@"%s from:%@ to:%@",__PRETTY_FUNCTION__,sourcePath,outputfile);
+	//NSMutableDictionary* newExif;
+	NSLog(@"%s from:%d to:%@",__PRETTY_FUNCTION__,index,outputfile);
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 #ifndef GNUSTEP
 	
 	// create the source 
-	NSURL *_url = [NSURL fileURLWithPath:sourcePath]; // for exif
+	//NSURL *_url = [NSURL fileURLWithPath:sourcePath]; // for exif
 	NSURL *_outurl = [NSURL fileURLWithPath:outputfile]; // dest
 	NSURL *_tmpurl = [NSURL fileURLWithPath:tempfile]; // for image
-	CGImageSourceRef exifsrc = CGImageSourceCreateWithURL((CFURLRef)_url, NULL);
+	//CGImageSourceRef exifsrc = CGImageSourceCreateWithURL((CFURLRef)_url, NULL);
+	//    Get the ID for the selected version
+	NSString *_versionID;
+    _versionID = [[[_editManager selectedVersionIds] objectAtIndex:index] retain];
+
 	CGImageSourceRef source = CGImageSourceCreateWithURL((CFURLRef)_tmpurl, NULL);
 	if(source != nil) {
 		// get Exif from source?
-		NSDictionary* properties = (NSDictionary *)CGImageSourceCopyPropertiesAtIndex(exifsrc, 0, NULL);
+		// Get properties ...
+		NSDictionary *metadata = [_editManager propertiesWithoutThumbnailForVersion:_versionID];
+		
+		//NSDictionary* metadata = (NSDictionary *)CGImageSourceCopyPropertiesAtIndex(exifsrc, 0, NULL);
+		//make the metadata dictionary mutable so we can add properties to it
+		NSMutableDictionary *metadataAsMutable = [[metadata mutableCopy]autorelease];
+		//crash ? [metadata release];
+		
 		//NSLog(@"props: %@", [(NSDictionary *)properties description]);
-		NSDictionary *exif = (NSDictionary *)[properties objectForKey:(NSString *)kCGImagePropertyExifDictionary];
-		if(exif) { /* kCGImagePropertyIPTCDictionary kCGImagePropertyExifAuxDictionary */
+		//NSMutableDictionary *newExif = [[[metadata objectForKey:(NSString *)kCGImagePropertyExifDictionary]mutableCopy]autorelease];
+		NSMutableDictionary *newExif = [[[metadata objectForKey:(NSString *)kExportKeyEXIFProperties]mutableCopy]autorelease];		
+		
+		if(!newExif) {
+			//if the image does not have an EXIF dictionary (not all images do), then create one for us to use
+			newExif = [NSMutableDictionary dictionary];
+		}
+		
+		if(newExif) { /* kCGImagePropertyIPTCDictionary kCGImagePropertyExifAuxDictionary */
 			//NSLog(@"the exif data is: %@", [exif description]);
-			newExif = [NSMutableDictionary dictionaryWithDictionary:exif];
-
+			//newExif = [NSMutableDictionary dictionaryWithDictionary:exif];
+			
 			if ([mCopyShutter state]==NSOnState) {
 				NSLog(@"%s removing shutter speed",__PRETTY_FUNCTION__);
 				[newExif removeObjectForKey:(NSString *)kCGImagePropertyExifExposureTime];
@@ -1120,6 +1165,9 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
 			}
 		} /* kCGImagePropertyExifFocalLength kCGImagePropertyExifExposureTime kCGImagePropertyExifExposureTime */
 		
+		//add our modified EXIF data back into the image’s metadata
+		[metadataAsMutable setObject:newExif forKey:(NSString *)kCGImagePropertyExifDictionary];
+		
 		// create the destination
 		CGImageDestinationRef destination = CGImageDestinationCreateWithURL((CFURLRef)_outurl,
 				CGImageSourceGetType(source),
@@ -1127,7 +1175,6 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
 				NULL);
 	
 		//CGImageDestinationSetProperties(destination, (CFDictionaryRef)exif);	
-		
 
 		// copy data from temporary image ...
 		int imageCount = CGImageSourceGetCount(source);
@@ -1137,15 +1184,13 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
 				CGImageDestinationAddImageFromSource(destination,
 						     source,
 						     i,
-						     (CFDictionaryRef)newExif);
+						     (CFDictionaryRef)metadataAsMutable);
 		}
     
 		CGImageDestinationFinalize(destination);
     
 		CFRelease(destination);
 		CFRelease(source); 
-		CFRelease(properties);
-		CFRelease(exifsrc); 
 	} else {
 		NSRunInformationalAlertPanel(@"Copying Exif error!",
 									 @"Unable to add Exif to Image.",

@@ -76,7 +76,8 @@
   IBOutlet NSButton* mCopyShutter;
   IBOutlet NSButton* mCopyFocal;
 
-  //
+  // progress panel
+  IBOutlet NSPanel *mProgressPanel;
   IBOutlet NSProgressIndicator *mProgressIndicator;
   IBOutlet NSTextField *mProgressText;
 
@@ -120,6 +121,7 @@
 - (IBAction)about: (id)sender;
 - (IBAction)reset:(id)sender;
 - (IBAction)enfuse: (id)sender;
+- (IBAction)cancel: (id)sender;
 
 - (IBAction)takeSaturation: (id)sender;
 - (IBAction)takeContrast: (id)sender;
