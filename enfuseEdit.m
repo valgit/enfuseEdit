@@ -642,6 +642,7 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
         }
 
         if ([mAutoAlign state] == NSOnState) {
+		
             NSLog(@"%s need to autoalign",__PRETTY_FUNCTION__);
             aligntask = [[alignStackTask alloc] initWithPath:[self temppath]];
             [aligntask setGridSize:[mGridSize stringValue]];
@@ -732,6 +733,7 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
     filename = @"enfused";
     #endif
 
+								
     // TODO [[mInputFile stringValue] lastPathComponent];
     //NSString *extension = [[filename pathExtension] lowercaseString];
     //NSLog(filename);
@@ -853,7 +855,7 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
 				[ NSApp endSheet: mProgressPanel ];
 				[ mProgressPanel orderOut: self ];
 				
-    //[mEnfuseButton setTitle:@"Cancel"];
+	    //[mEnfuseButton setTitle:@"Cancel"];
     return;                                       // testing !
 }
 
