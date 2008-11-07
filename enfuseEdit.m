@@ -1083,6 +1083,10 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
             [defaultManager removeFileAtPath:[NSString stringWithFormat:@"%@/%@",[self temppath],filename] handler:self];
         }
     }
+
+	// remove tempdir ...
+        [defaultManager removeFileAtPath:[self temppath] handler:self];
+
 	[self setDefaults];
 }
 
@@ -1152,6 +1156,8 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
 		if(newExif) { /* kCGImagePropertyIPTCDictionary kCGImagePropertyExifAuxDictionary */
 			//NSLog(@"the exif data is: %@", [exif description]);
 			//newExif = [NSMutableDictionary dictionaryWithDictionary:exif];
+			NSLog(@"%s removing bias value",__PRETTY_FUNCTION__);
+			[newExif removeObjectForKey:@"ExposureBiasValue"];
 			
 			if ([mCopyShutter state]==NSOnState) {
 				NSLog(@"%s removing shutter speed",__PRETTY_FUNCTION__);

@@ -23,6 +23,8 @@
   BOOL cancel;
 
   int state;
+
+  NSString* filename;
 }
 
 - (id)initWithPath:(NSString*)tmp_path;

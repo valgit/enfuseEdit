@@ -12,6 +12,8 @@
     //NSLog(@"%s",__PRETTY_FUNCTION__);
     //lock = [[NSConditionLock alloc] initWithCondition:0];
 	progress = nil;
+	filename = nil;
+
 	mProgressInfo  = [[TaskProgressInfo alloc ] init];
 	cancel =NO;
 	args = [[NSMutableArray array] retain];
@@ -132,7 +134,10 @@
 	if ([output rangeOfString:@"loading"].location != NSNotFound) {
 		if (state != 1) {
 		//	NSLog(@"load");
-		[mProgressInfo setDisplayText:@"Align load"];
+		NSArray *listItems = [output componentsSeparatedByString:@" "];
+		[filename release];
+                filename = [[listItems objectAtIndex:13] copy];
+		[mProgressInfo setDisplayText:[NSString stringWithFormat:@"Align : loading %@",filename]];
 		[mProgressInfo setProgressValue:[NSNumber numberWithInt:
 			([[mProgressInfo progressValue] intValue]+1)]];
 			state = 1;
@@ -141,7 +146,7 @@
 	if ([output rangeOfString:@"saving"].location != NSNotFound)  {
 		if (state != 2) {
 		//	NSLog(@"save");
-		[mProgressInfo setDisplayText:@"Align saving"];
+		[mProgressInfo setDisplayText:[NSString stringWithFormat:@"Align : saving %@",filename]];
 			state = 2;
 		[mProgressInfo setProgressValue:[NSNumber numberWithInt:
 			([[mProgressInfo progressValue] intValue]+1)]];
@@ -150,7 +155,7 @@
 	if ([output rangeOfString:@"remapping"].location != NSNotFound) {
 		if (state != 3) {
 		//	NSLog(@"remap");
-		[mProgressInfo setDisplayText:@"Align remapping"];
+		[mProgressInfo setDisplayText:[NSString stringWithFormat:@"Align : remapping %@",filename]];
 			state = 3;
 		[mProgressInfo setProgressValue:[NSNumber numberWithInt:
 			([[mProgressInfo progressValue] intValue]+1)]];
@@ -160,7 +165,7 @@
 	   ([output rangeOfString:@"Strategy"].location != NSNotFound) ) {
 		if (state != 4) {
 		//	NSLog(@"optim");
-		[mProgressInfo setDisplayText:@"Align optimizing"];
+		[mProgressInfo setDisplayText:@"Align : optimizing"];
 		[mProgressInfo setProgressValue:[NSNumber numberWithInt:
 			([[mProgressInfo progressValue] intValue]+1)]];
 			state = 4;
