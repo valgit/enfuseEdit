@@ -7,26 +7,27 @@
 {
     static int unique = 1;
     NSString *tempName = nil;
-
+	
     if ([format isEqualToString:@""])
-                format = [templatier pathExtension];
-
-    MLogString(1,@"format is : %@, with:%@ and %@",format,templatier,append);
-
+		format = [templatier pathExtension];
+	
+    //MLogString(1,@"format is : %@, with:%@ and %@",format,templatier,append);
+	
     tempName =[NSString stringWithFormat:@"%@%@.%@",
-                [templatier stringByDeletingPathExtension],append,
-                //[templatier pathExtension]];
-                format];
-                if ([[NSFileManager defaultManager] fileExistsAtPath:tempName]) {
-                        do {
-                                tempName =[NSString stringWithFormat:@"%@%@_%d.%@",
-                                        [templatier stringByDeletingPathExtension],append,unique++,
-                                        //[templatier pathExtension]];
-                                        format];
-            } while ([[NSFileManager defaultManager] fileExistsAtPath:tempName]);
+		[templatier stringByDeletingPathExtension],append,
+		//[templatier pathExtension]];
+		format];
+		
+	if ([[NSFileManager defaultManager] fileExistsAtPath:tempName]) {
+		do {
+				tempName =[NSString stringWithFormat:@"%@%@_%d.%@",
+					[templatier stringByDeletingPathExtension],append,unique++,
+					//[templatier pathExtension]];
+					format];
+           } while ([[NSFileManager defaultManager] fileExistsAtPath:tempName]);
     }
-				MLogString(2,"will return : %@",tempName);
-                return tempName;
+	//MLogString(2,@"will return : %@",tempName);
+	return tempName;
 }
 
 // return a somewhat globally unique filename ...
