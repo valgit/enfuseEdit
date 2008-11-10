@@ -26,7 +26,8 @@
 #else
  #define MLogString(l ,s,...) [MLog logFile:__FILE__ lineNumber:__LINE__ func:__PRETTY_FUNCTION__ level:l format:(s),##__VA_ARGS__]
 #endif
- 
+
+
 @interface MLog: NSObject {
 }
  

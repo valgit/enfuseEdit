@@ -1,4 +1,5 @@
 #import "NSFileManager-Extensions.h"
+#import"MLog.h"
 
 @implementation NSFileManager(NSFileManager_Extensions)
 
@@ -10,7 +11,7 @@
     if ([format isEqualToString:@""])
                 format = [templatier pathExtension];
 
-    NSLog(@"format is : %@",format);
+    MLogString(1,@"format is : %@, with:%@ and %@",format,templatier,append);
 
     tempName =[NSString stringWithFormat:@"%@%@.%@",
                 [templatier stringByDeletingPathExtension],append,
@@ -24,6 +25,7 @@
                                         format];
             } while ([[NSFileManager defaultManager] fileExistsAtPath:tempName]);
     }
+				MLogString(2,"will return : %@",tempName);
                 return tempName;
 }
 

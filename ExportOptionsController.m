@@ -1,3 +1,4 @@
+#import "MLog.h"
 #import "ExportOptionsController.h"
 
 @implementation ExportOptionsController
@@ -6,7 +7,7 @@
 
 - (id)init
 {
-	NSLog(@"%s",__PRETTY_FUNCTION__);
+	MLogString(6 ,@"");
 	if (![super initWithWindowNibName:[self windowNibName]])
 		return nil;
 	// [NSBundle loadNibNamed:@"ExportOptions" owner:self];
@@ -16,14 +17,14 @@
 
 - (void)dealloc;
 {
-	NSLog(@"%s",__PRETTY_FUNCTION__);
+	MLogString(6 ,@"");
 	[super dealloc];
 }
 
 
 - (void)runSheet:(NSWindow*)parentWindow selector:(SEL)sel target:(id)target;
 {
-	NSLog(@"%s",__PRETTY_FUNCTION__);
+	MLogString(6 ,@"");
     _selector = sel;
     _target = target; // don't retain
 	
@@ -43,7 +44,7 @@
 
 - (void)sheetDidEnd:(NSWindow *)sheet returnCode:(int)returnCode contextInfo:(void *)contextInfo
 {
-	NSLog(@"%s",__PRETTY_FUNCTION__);
+	MLogString(6 ,@"");
     [sheet close];
 }
 
@@ -51,13 +52,13 @@
 
 - (IBAction)cancelAction:(id)sender
 {
-	NSLog(@"%s",__PRETTY_FUNCTION__);
+	MLogString(6 ,@"");
     [NSApp endSheet: [self window] returnCode:NSCancelButton];
 }
 
 - (IBAction)okAction:(id)sender
 {
-	NSLog(@"%s",__PRETTY_FUNCTION__);
+	MLogString(6 ,@"");
     [NSApp endSheet: [self window] returnCode:NSOKButton];
 	
     // call the sheet is done action
@@ -67,7 +68,7 @@
 
 - (IBAction)chooseDirectory:(id)sender;
 {
-	NSLog(@"%s",__PRETTY_FUNCTION__);
+	MLogString(6 ,@"");
 	   NSOpenPanel* oPanel = [NSOpenPanel openPanel];
 
         [oPanel setCanChooseDirectories:YES];

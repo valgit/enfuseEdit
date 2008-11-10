@@ -7,6 +7,7 @@
 //
 
 #import "enfuseEdit.h"
+#import "MLog.h"
 
 #import "NSFileManager-Extensions.h"
 #import "TaskProgressInfo.h"
@@ -23,7 +24,7 @@
 -(BOOL)checkApplicationPath;
 
 // handle Exif
--(void)copyExifFrom:(int)index to:(NSString*)outputfile with:(NSString*)tempfile;
+-(void)copyExif:(NSString*)tempfile;
 
 // handle presets 
 - (NSData *) dataOfType: (NSString *) typeName;
@@ -52,7 +53,7 @@
             return nil;
 
         // Finish your initialization here
-        NSLog(@"%s",__PRETTY_FUNCTION__);
+        MLogString(6 ,@"");
         // Create the array we'll use to hold the paths to our images
         //test images = [[NSMutableArray alloc] init];
         // allocate the cache ...
@@ -101,7 +102,7 @@
 // control of the UI.
 -(void)awakeFromNib
 {
-    NSLog(@"%s",__PRETTY_FUNCTION__);
+    MLogString(6 ,@"");
 
     findRunning=NO;
 
@@ -123,7 +124,7 @@
 
 - (NSWindow *)editWindow
 {
-    NSLog(@"%s",__PRETTY_FUNCTION__);
+    MLogString(6 ,@"");
     if (_editWindow == nil) {
         NSBundle *myBundle = [NSBundle bundleForClass:[self class]];
         NSNib *myNib = [[NSNib alloc] initWithNibNamed:@"enfuseEdit" bundle:myBundle];
@@ -193,7 +194,7 @@
 
 - (void)editManager:(id<ApertureEditManager>)editManager didImportImageAtPath:(NSString *)path versionUniqueID:(NSString *)versionUniqueID
 {
-    NSLog(@"%s",__PRETTY_FUNCTION__);
+    MLogString(6 ,@"");
     NSArray *version = [NSArray arrayWithObject:versionUniqueID];
 
     if ([[useroptions valueForKey:@"addKeyword"] boolValue]) {
@@ -223,7 +224,7 @@
 
 - (void)editManager:(id<ApertureEditManager>)editManager didNotImportImageAtPath:(NSString *)path error:(NSError *)error;
 {
-    NSLog(@"%s",__PRETTY_FUNCTION__);
+    MLogString(6 ,@"");
     // should we display something here ?
 
     [self cleanuptempdir];
@@ -238,7 +239,7 @@
 
 - (IBAction)_cancelEditing:(id)sender
 {
-    NSLog(@"%s",__PRETTY_FUNCTION__);
+    MLogString(6 ,@"");
     if (findRunning) {
         NSRunAlertPanel (NSLocalizedString(@"Already Running task Error",@""),
             NSLocalizedString(@"NYI",nil), NSLocalizedString(@"OK",nil), NULL, NULL);
@@ -254,62 +255,46 @@
 
 - (IBAction)_doneEditing:(id)sender
 {
-    NSLog(@"%s",__PRETTY_FUNCTION__);
-
+    MLogString(6 ,@"");
+	
     if (findRunning) {
         NSRunAlertPanel (NSLocalizedString(@"Already Running task Error",@""),
-            NSLocalizedString(@"NYI",nil), NSLocalizedString(@"OK",nil), NULL, NULL);
+						 NSLocalizedString(@"NYI",nil), NSLocalizedString(@"OK",nil), NULL, NULL);
     }
-
+	
     // maybe we should to some cleanup ?
     //- (void)deleteVersions:(NSArray *)versionUniqueIDs;
-
-    if ([[useroptions valueForKey:@"importInAperture"] boolValue])
-        NSLog(@"%s should import",__PRETTY_FUNCTION__);
-
-    if ([[useroptions valueForKey:@"stackWithOriginal"] boolValue])
-        NSLog(@"%s should stack",__PRETTY_FUNCTION__);
-
-    if ([_editManager canImport]) {
-        NSLog(@"%s will import",__PRETTY_FUNCTION__);
-        //NSString *enfuseImage= @"/Users/valery/Pictures/working/test.tiff"; // TODO
-        [_editManager importImageAtPath:[self outputfile] referenced:YES stackWithVersions:[_editManager selectedVersionIds]];
-        // - (id)importedVersionIds;
-
-    }
-    else {
-        NSLog(@"%s can't import !",__PRETTY_FUNCTION__);
-        [self cleanuptempdir];
-
-        // should we display something here ?
-        [_editManager endEditSession];
-    }
-    #if 0
-    // The whole point of this method is to actually write out the changes the user has made
-    int i, count = [[_editManager selectedVersionIds] count];
-    NSLog(@"%s selected : %d",__PRETTY_FUNCTION__,count);
-    for (i = 0; i < count; i++) {
-        NSString *filePath = [images objectAtIndex:i];
-        if ([filePath isKindOfClass:[NSString class]]) {
-            NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-
-            // Tag this image with a keyword stating it was edited, and a custom metadata value saying how.
-            //NSString *versionUniqueId = [[_editManager editableVersionIds] objectAtIndex:_editingIndex];
-            if (versionUniqueId != nil) {
-                NSArray *version = [NSArray arrayWithObject:versionUniqueId];
-                NSString *keyword = @"Edited";
-                NSArray *keywordHierarchy = [NSArray arrayWithObject:keyword];
-                NSArray *keywords =  [NSArray arrayWithObject:keywordHierarchy];
-                [_editManager addHierarchicalKeywords:keywords toVersions:version];
-
-                //NSDictionary *customMetadata = [NSDictionary dictionaryWithObject:[[_currentSettings objectAtIndex:_editingIndex] stringValue] forKey:@"SampleEditPlugIn Pixelate Value"];
-                [_editManager addCustomMetadata:customMetadata toVersions:version];
-            }
-
-            [pool release];
-        }
-    }
-    #endif
+	
+    if ([[useroptions valueForKey:@"importInAperture"] boolValue]) {
+        MLogString(6 ,@"should import");
+		
+		if ([_editManager canImport]) {
+			MLogString(6 ,@"will import");
+			if ([[useroptions valueForKey:@"stackWithOriginal"] boolValue]) {
+				//NSString *enfuseImage= @"/Users/valery/Pictures/working/test.tiff"; // TODO
+				// should we check for referenced ?
+				[_editManager importImageAtPath:[self outputfile] referenced:YES stackWithVersions:[_editManager selectedVersionIds]];
+				// - (id)importedVersionIds;
+			} else {
+				MLogString(6, @"will import, not stacked");
+				[_editManager importImageAtPath:[self outputfile] referenced:YES stackWithVersions:nil];
+			}
+			
+		}
+		else {
+			MLogString(6 ,@"can't import but import required !");
+			[self cleanuptempdir];
+			
+			// should we display something here ?
+			[_editManager endEditSession];
+		}
+	} else {
+		NSLog(@"%s no import !");
+		[self cleanuptempdir];
+		
+		// should we display something here ?
+		[_editManager endEditSession];		
+	}
 }
 
 #pragma mark -
@@ -429,13 +414,13 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
 
 -(void)removeObjectFromImagesAtIndex:(unsigned)index;
 {
-    NSLog(@"%s",__PRETTY_FUNCTION__);
+    MLogString(6 ,@"");
     //test [images removeObjectAtIndex: index];
 }
 
 -(void)replaceObjectInImagesAtIndex:(unsigned)index withObject:(id)obj;
 {
-    NSLog(@"%s",__PRETTY_FUNCTION__);
+   MLogString(6 ,@"");
     //test [images replaceObjectAtIndex: index withObject: obj];
 }
 
@@ -444,7 +429,7 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
 
 - (IBAction)reset:(id)sender
 {
-    NSLog(@"%s",__PRETTY_FUNCTION__);
+    MLogString(6 ,@"");
 
     [mContrastSlider setFloatValue:0.0];          // (0 <= WEIGHT <= 1).  Default: 0
     [self takeContrast:mContrastSlider];
@@ -464,7 +449,7 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
 
 - (IBAction) about: (id)sender;
 {
-    NSLog(@"%s",__PRETTY_FUNCTION__);
+    MLogString(6 ,@"");
     #if 0
     // Method to load the .nib file for the info panel.
     if (!infoPanel) {
@@ -530,7 +515,7 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
 {
     // - (id)userDefaultsObjectForKey:(NSString *)key;
 
-    NSLog(@"%s",__PRETTY_FUNCTION__);
+    MLogString(6 ,@"");
     NSOpenPanel *open = [NSOpenPanel openPanel];
     [open setTitle:@"Load Presets"];
     [open setAllowsMultipleSelection:NO];
@@ -547,7 +532,7 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
 {
     // - (void)setUserDefaultsValue:(id)value forKey:(NSString *)key;
 
-    NSLog(@"%s",__PRETTY_FUNCTION__);
+    MLogString(6 ,@"");
     NSSavePanel *save = [NSSavePanel savePanel];
     [save setTitle:@"Save Presets"];
     [save setRequiredFileType:@"enf"];
@@ -562,7 +547,7 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
 
 - (IBAction)preferencesSaving:(id)sender;
 {
-    NSLog(@"%s",__PRETTY_FUNCTION__);
+    MLogString(6 ,@"");
 
     [useroptions setValue:[NSNumber numberWithBool:[exportOptionsSheetController AddKeyword]]
         forKey:@"addKeyword"];
@@ -583,7 +568,7 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
 
 - (IBAction)openPreferences:(id)sender
 {
-    NSLog(@"%s",__PRETTY_FUNCTION__);
+    MLogString(6 ,@"");
 
     if (exportOptionsSheetController == nil)
         exportOptionsSheetController = [[ExportOptionsController alloc] init ];
@@ -613,14 +598,14 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
 
 - (IBAction)cancel:(id)sender
 {
-	NSLog(@"%s",__PRETTY_FUNCTION__);
+	MLogString(6 ,@"");
 	[ NSApp stopModal ];
 	findRunning = NO;
 }
 
 - (IBAction) enfuse: (id)sender;
 {
-    NSLog(@"%s",__PRETTY_FUNCTION__);
+    MLogString(6 ,@"");
     if (findRunning) {
         NSLog(@"already running");
         //NSRunAlertPanel (NSLocalizedString(@"Error",@""),
@@ -642,7 +627,11 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
         }
 
         if ([mAutoAlign state] == NSOnState) {
-		
+			// prepare progress sheet
+			[ NSApp beginSheet: mProgressPanel 
+				modalForWindow: [_editManager apertureWindow] modalDelegate: nil
+				didEndSelector: nil contextInfo: nil ];
+			
             NSLog(@"%s need to autoalign",__PRETTY_FUNCTION__);
             aligntask = [[alignStackTask alloc] initWithPath:[self temppath]];
             [aligntask setGridSize:[mGridSize stringValue]];
@@ -693,10 +682,7 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
             // for now !
             //[mEnfuseButton setEnabled:NO];
 			
-			// show the progress sheet
-			[ NSApp beginSheet: mProgressPanel 
-				modalForWindow: [_editManager apertureWindow] modalDelegate: nil
-				didEndSelector: nil contextInfo: nil ];
+			// show the progress sheet		
 			[ NSApp runModalForWindow: mProgressPanel ];
 			[ NSApp endSheet: mProgressPanel ];
 			[ mProgressPanel orderOut: self ];
@@ -714,7 +700,7 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
 
 - (void)doEnfuse
 {
-    NSLog(@"%s",__PRETTY_FUNCTION__);
+    MLogString(6 ,@"");
     NSDictionary* file=nil;
 
     //
@@ -757,9 +743,11 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
         default:
             NSLog(@"bad selected tag is %d",[[mOutputType selectedCell] tag]);
     }
-
+	
+	MLogString(1,@"output will be set to : %@",outputfile);
     [self setOutputfile:outputfile];
-
+	MLogString(1,@"output is set to : %@",[self outputfile]);
+	
     //
     // create the enfuse task
     if (enfusetask != nil) {
@@ -816,6 +804,12 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
         }
     }
 
+	// prepare progres sheet
+	[ NSApp beginSheet: mProgressPanel 
+		modalForWindow: [_editManager apertureWindow] modalDelegate: nil
+		didEndSelector: nil contextInfo: nil ];
+	[mProgressText setStringValue:@"Setting up Enfusing..."];
+	
     #if 0
     // TODO : check the preferences ...
     if ([[mOutFormat titleOfSelectedItem] isEqualToString:@"JPEG"] ) {
@@ -848,14 +842,11 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
     //[mEnfuseButton setEnabled:NO];
 	
 	// show the progress sheet
-	[ NSApp beginSheet: mProgressPanel 
-		modalForWindow: [_editManager apertureWindow] modalDelegate: nil
-		didEndSelector: nil contextInfo: nil ];
-				[ NSApp runModalForWindow: mProgressPanel ];
-				[ NSApp endSheet: mProgressPanel ];
-				[ mProgressPanel orderOut: self ];
+	[ NSApp runModalForWindow: mProgressPanel ];
+	[ NSApp endSheet: mProgressPanel ];
+	[ mProgressPanel orderOut: self ];
 				
-	    //[mEnfuseButton setTitle:@"Cancel"];
+	   //[mEnfuseButton setTitle:@"Cancel"];
     return;                                       // testing !
 }
 
@@ -879,7 +870,7 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
 // delegate for align_task thread
 -(void)alignFinish:(int)status;
 {
-    NSLog(@"%s status %d",__PRETTY_FUNCTION__,status);
+    MLogString(5,@"status %d",status);
     [mProgressIndicator setDoubleValue:0];
     [mProgressIndicator stopAnimation:self];
     [mProgressText setStringValue:@""];
@@ -900,7 +891,7 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
 // delegate for enfuse task thread
 -(void)enfuseFinish:(int)status;
 {
-    NSLog(@"%s status %d",__PRETTY_FUNCTION__,status);
+    MLogString(5,@"status %d",status);
     [mProgressIndicator stopAnimation:self];
     [mProgressIndicator setDoubleValue:0];
     [mProgressText setStringValue:@""];
@@ -910,16 +901,26 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
     //[mEnfuseButton setTitle:@"Enfuse"];
     //[mEnfuseButton setEnabled:YES];
     int canceled = [enfusetask cancel];
+	MLogString(1,@"output will be : %@",[self outputfile]);
     if (status  == 0 && canceled != YES) {
         if([mCopyMeta state]==NSOnState) {
             [mProgressText setStringValue:@"Copying Exif values..."];
-            [self copyExifFrom:0 
-                to:[self outputfile] with:[enfusetask outputfile]];
+            [self copyExif:[enfusetask outputfile]];
         }
         else {
             NSFileManager *fm = [NSFileManager defaultManager];
             if ([fm fileExistsAtPath:([enfusetask outputfile])]) {
                 BOOL result = [fm movePath:[enfusetask outputfile] toPath:[self outputfile] handler:self];
+				if (!result) {
+					NSString *alert;
+					NSString *file = [enfusetask outputfile];
+					if (file != nil)
+						alert = [file stringByAppendingString: @"Can't rename"];
+					else
+						alert = @"no file name !";
+					
+						NSRunAlertPanel (NULL, alert , @"OK", NULL, NULL);
+				}
             }
             else {
                 NSString *alert;
@@ -1072,7 +1073,7 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
 -(void)cleanuptempdir;
 {
     NSFileManager *defaultManager = [NSFileManager defaultManager];
-    NSLog(@"%s",__PRETTY_FUNCTION__);
+    MLogString(6 ,@"");
     
     NSString *filename;
     NSEnumerator* enumerator = [[defaultManager directoryContentsAtPath: [self temppath] ] objectEnumerator];
@@ -1117,21 +1118,21 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
     return YES;
 }
 
--(void)copyExifFrom:(int)index to:(NSString*)outputfile with:(NSString*)tempfile;
+-(void)copyExif:(NSString*)tempfile;
 {
 	//NSMutableDictionary* newExif;
-	NSLog(@"%s from:%d to:%@",__PRETTY_FUNCTION__,index,outputfile);
+	MLogString(6,@"from:%@ to:%@",tempfile,[self outputfile]);
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 #ifndef GNUSTEP
 	
 	// create the source 
 	//NSURL *_url = [NSURL fileURLWithPath:sourcePath]; // for exif
-	NSURL *_outurl = [NSURL fileURLWithPath:outputfile]; // dest
+	NSURL *_outurl = [NSURL fileURLWithPath:[self outputfile]]; // dest
 	NSURL *_tmpurl = [NSURL fileURLWithPath:tempfile]; // for image
 	//CGImageSourceRef exifsrc = CGImageSourceCreateWithURL((CFURLRef)_url, NULL);
 	//    Get the ID for the selected version
 	NSString *_versionID;
-    _versionID = [[[_editManager selectedVersionIds] objectAtIndex:index] retain];
+    _versionID = [[[_editManager selectedVersionIds] objectAtIndex:0] retain];
 
 	CGImageSourceRef source = CGImageSourceCreateWithURL((CFURLRef)_tmpurl, NULL);
 	if(source != nil) {
@@ -1154,21 +1155,21 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
 		}
 		
 		if(newExif) { /* kCGImagePropertyIPTCDictionary kCGImagePropertyExifAuxDictionary */
-			//NSLog(@"the exif data is: %@", [exif description]);
+			MLogString(1,@"the exif data is: %@", [newExif description]);
 			//newExif = [NSMutableDictionary dictionaryWithDictionary:exif];
-			NSLog(@"%s removing bias value",__PRETTY_FUNCTION__);
+			MLogString(2,@"removing bias value");
 			[newExif removeObjectForKey:@"ExposureBiasValue"];
 			
 			if ([mCopyShutter state]==NSOnState) {
-				NSLog(@"%s removing shutter speed",__PRETTY_FUNCTION__);
+				MLogString(2,@"removing shutter speed");
 				[newExif removeObjectForKey:(NSString *)kCGImagePropertyExifExposureTime];
 			}
 			if ([mCopyAperture state]==NSOnState) {
-				NSLog(@"%s removing aperture",__PRETTY_FUNCTION__);
+				MLogString(2,@"%s removing aperture");
 				[newExif removeObjectForKey:(NSString *)kCGImagePropertyExifFNumber];
 			}
 			if ([mCopyFocal state]==NSOnState) {
-				NSLog(@"%s removing focal length",__PRETTY_FUNCTION__);
+				MLogString(2,@"removing focal length");
 				[newExif removeObjectForKey:(NSString *)kCGImagePropertyExifFocalLength];
 			}
 		} /* kCGImagePropertyExifFocalLength kCGImagePropertyExifExposureTime kCGImagePropertyExifExposureTime */

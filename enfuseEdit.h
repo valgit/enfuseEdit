@@ -106,7 +106,7 @@
   
   	alignStackTask* aligntask;
 	enfuseTask* enfusetask;
-
+	BOOL _haveeditedversion;
 
       NSString* _outputfile;
     NSString* _tmpfile;

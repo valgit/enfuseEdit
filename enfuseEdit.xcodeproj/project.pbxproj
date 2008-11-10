@@ -16,6 +16,8 @@
 		7111D3F40EC084FF006D679B /* NSFileManager-Extensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 7111D3F20EC084FF006D679B /* NSFileManager-Extensions.m */; };
 		7111D4500EC087E7006D679B /* alignStackTask.m in Sources */ = {isa = PBXBuildFile; fileRef = 7111D3560EC07E6D006D679B /* alignStackTask.m */; };
 		7111D4520EC0880B006D679B /* enfuseTask.m in Sources */ = {isa = PBXBuildFile; fileRef = 7111D3570EC07E6D006D679B /* enfuseTask.m */; };
+		7128A4DE0EC8558300094E8E /* MLog.m in Sources */ = {isa = PBXBuildFile; fileRef = 7128A4DC0EC8558300094E8E /* MLog.m */; };
+		7128A4DF0EC8558300094E8E /* MLog.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 7128A4DD0EC8558300094E8E /* MLog.h */; };
 		717C7DB50EC0928F00340889 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 717C7DB40EC0928F00340889 /* QuartzCore.framework */; };
 		8D5B49B0048680CD000E48DA /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C167DFE841241C02AAC07 /* InfoPlist.strings */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
@@ -32,6 +34,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 6;
 			files = (
+				7128A4DF0EC8558300094E8E /* MLog.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -61,6 +64,8 @@
 		7111D3600EC07F19006D679B /* ExportOptionsController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = ExportOptionsController.m; sourceTree = "<group>"; };
 		7111D3F10EC084FF006D679B /* NSFileManager-Extensions.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = "NSFileManager-Extensions.h"; sourceTree = "<group>"; };
 		7111D3F20EC084FF006D679B /* NSFileManager-Extensions.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = "NSFileManager-Extensions.m"; sourceTree = "<group>"; };
+		7128A4DC0EC8558300094E8E /* MLog.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = MLog.m; sourceTree = "<group>"; };
+		7128A4DD0EC8558300094E8E /* MLog.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MLog.h; sourceTree = "<group>"; };
 		717C7DB40EC0928F00340889 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = /System/Library/Frameworks/QuartzCore.framework; sourceTree = "<absolute>"; };
 		8D5B49B7048680CD000E48DA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Info.plist; sourceTree = "<group>"; };
 		D118EA650AC08CCB006DD2FE /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -174,6 +179,8 @@
 		32C88E010371C26100C91783 /* Other Sources */ = {
 			isa = PBXGroup;
 			children = (
+				7128A4DC0EC8558300094E8E /* MLog.m */,
+				7128A4DD0EC8558300094E8E /* MLog.h */,
 				1A6965360E95606300FE9F6B /* TaskWrapper.h */,
 				1A6965370E95606300FE9F6B /* TaskWrapper.m */,
 				32DBCF630370AF2F00C91783 /* enfuseEdit_Prefix.pch */,
@@ -273,6 +280,7 @@
 				7111D3F40EC084FF006D679B /* NSFileManager-Extensions.m in Sources */,
 				7111D4500EC087E7006D679B /* alignStackTask.m in Sources */,
 				7111D4520EC0880B006D679B /* enfuseTask.m in Sources */,
+				7128A4DE0EC8558300094E8E /* MLog.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -380,6 +388,7 @@
 					ppc,
 					i386,
 				);
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				PREBINDING = NO;
