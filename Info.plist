@@ -7,7 +7,7 @@
 	<key>CFBundleExecutable</key>
 	<string>enfuseEdit</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.yourcompany.edit.enfuseEdit</string>
+	<string>net.dnsalias.vbr.edit.enfuseEdit</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
@@ -31,7 +31,6 @@
 	<key>ProPlugPlugInGroupList</key>
 	<array>
 		<dict>
-<!-- Do not change the groupName or uuid. These will help identify your plug-in as an Aperture Edit plug-in. -->
 			<key>groupName</key>
 			<string>Edit</string>
 			<key>uuid</key>
@@ -45,18 +44,15 @@
 			<string>enfuseEdit</string>
 			<key>displayName</key>
 			<string>Enfuse Processing</string>
-<!-- Do not change this uuid. It should match the group uuid above and will help Aperture identify your plug-in as an Edit plug-in. -->
 			<key>group</key>
 			<string>C4E54D0A-175D-4751-B9FD-308F6105BFB5</string>
+			<key>infoString</key>
+			<string>enfuse the selected images</string>
 			<key>protocolNames</key>
 			<array>
 				<string>ApertureEditPlugIn</string>
 			</array>
-			<key>infoString</key>
-			<!-- Describe your plug-in below. This is the text that will display in Aperture's keyboard customization window. -->
-			<string>enfuse the selected images</string>
 			<key>uuid</key>
-<!-- You must replace the text below with a UUID. Use the uuidgen command line utility to generate a new one and then paste it into the tag below. -->
 			<string>013BC702-6AA2-42B1-803F-B50669D3C1DA</string>
 		</dict>
 	</array>

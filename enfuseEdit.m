@@ -104,6 +104,31 @@
 {
     MLogString(6 ,@"");
 
+#if 1
+	NSDate *expirationDate = 
+	[[NSDate dateWithNaturalLanguageString:
+			[NSString stringWithCString:__DATE__]] 
+            addTimeInterval:(60*60*24*30/*30 days*/)];
+	
+    if( [expirationDate earlierDate:[NSDate date]] 
+		== expirationDate )
+    {
+        int result = NSRunAlertPanel(@"Beta Expired", 
+									 @"This beta has expired, please visit "
+									 "http://vald70.free.fr/ to grab"
+									 "the latest version.", 
+									 @"Take Me There", @"Exit", nil);
+		
+        if( result == NSAlertDefaultReturn )
+        {
+            [[NSWorkspace sharedWorkspace] openURL:
+				[NSURL URLWithString:
+							  @"http://vald70.free.fr/"]];
+        }
+        [[NSApplication sharedApplication] terminate:self];
+    }
+#endif
+	
     findRunning=NO;
 
     [_editWindow center];
@@ -1252,10 +1277,11 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
         }
 #endif
 		
-	MLogString(6,@"out");	
+		
 		[mProgressIndicator stopAnimation:self];
 		[mProgressIndicator setDoubleValue:0];
 		[NSApp stopModal];
+		MLogString(6,@"out");
 		[pool release];
 }
 
