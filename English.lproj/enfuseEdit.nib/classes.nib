@@ -10,6 +10,7 @@
                 openPreferences = id; 
                 openPresets = id; 
                 reset = id; 
+                runPreview = id; 
                 savePresets = id; 
                 takeContrast = id; 
                 takeExposure = id; 
@@ -53,6 +54,7 @@
                 mOutQuality = NSTextField; 
                 mOutputQualitySlider = NSSlider; 
                 mOutputType = NSMatrix; 
+                mPreviewImage = NSImageView; 
                 mProgressIndicator = NSProgressIndicator; 
                 mProgressPanel = NSPanel; 
                 mProgressText = NSTextField; 

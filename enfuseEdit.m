@@ -29,6 +29,9 @@
 // handle presets 
 - (NSData *) dataOfType: (NSString *) typeName;
 - (BOOL) readFromData: (NSData *) data ofType: (NSString *) typeName;
+
+-(NSString*)previewfilename:(NSString *)file;
+-(void)buildPreview;
 @end
 
 @implementation enfuseEdit
@@ -141,6 +144,7 @@
     // theIconColumn = [table tableColumnWithIdentifier:@"icon"];
     // [ic setImageScaling:NSScaleProportionally]; // or NSScaleToFit
     [self reset:_revertButton];
+	
 }
 
 #pragma mark -
@@ -181,7 +185,7 @@
     int count = [[_editManager selectedVersionIds] count];
     NSLog(@"%s selected : %d",__PRETTY_FUNCTION__,count);
 
-    #if 0
+#if 0
     for (index=0; index < count; index++) {
         //[images addObject:[NSNull null]];
         // get the version ID ...
@@ -362,13 +366,14 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
     //NSLog(@"%s for: %d",__PRETTY_FUNCTION__,index);
     cachedata = [_cacheImagesInfos objectForKey:indexkey];
     if (cachedata != nil) {
-        MLogString(1,@"as cache data for %d",index);
+        //MLogString(1,@"as cache data for %d",index);
         return cachedata;
     }
 
     NSString *_versionID;
     NSImage* image;
     NSString *text;
+	NSString *thumbname;
     NSNumber *enable = [NSNumber numberWithBool: YES];
     MLogString(1,@"data for: %d",index);
     //NSMutableDictionary *dict = [images objectAtIndex:index];
@@ -377,21 +382,29 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
     //    Get the ID for the selected version
     _versionID = [[[_editManager selectedVersionIds] objectAtIndex:index] retain];
 
-    //    Get the thumbnail from Aperture
-    image = [[_editManager thumbnailForVersion:_versionID size:kExportThumbnailSizeThumbnail] retain];
-    //image = nil;
-    if ( nil == image) {
-        MLogString(6,@"can't get thumbnail");
-    }
-    // TODO : grab real value !
-    //text = [[@"test"  retain ] autorelease];
     // Get properties ...
     NSDictionary *properties = [_editManager propertiesWithoutThumbnailForVersion:_versionID];
     //NSLog(@"%s : props are %@", __PRETTY_FUNCTION__, properties);
     //no valuated NSString *path = [_editManager pathOfEditableFileForVersion:_versionID];
-    NSString *exportName = [[[properties objectForKey:kExportKeyVersionName] retain ] autorelease];
-    //kExportKeyEXIFProperties
-
+	// get the Aperture "name"
+	NSString *exportName = [[[properties objectForKey:kExportKeyVersionName] retain ] autorelease];
+	MLogString(1,@"export name : %@",exportName);
+	
+	//    Get the thumbnail from Aperture
+    image = [[_editManager thumbnailForVersion:_versionID size:kExportThumbnailSizeThumbnail] retain];
+	thumbname = [self previewfilename:exportName];
+    //image = nil;
+    if ( nil == image) {
+        MLogString(6,@"can't get thumbnail");
+		NSBundle *bundle = [NSBundle bundleForClass:[self class]];
+		NSString *noThumbPath = [bundle pathForResource:@"image_broken" ofType:@"png" inDirectory:nil];
+		NSImage *nothumb = [[[NSImage alloc] initWithContentsOfFile:noThumbPath] autorelease];
+		image = nothumb;
+    } else {
+		NSData *thumbData = [image  TIFFRepresentation];
+		[thumbData writeToFile:thumbname atomically:YES];
+	}
+	
     NSDictionary *exif = [properties objectForKey:kExportKeyEXIFProperties];
     //NSLog(@"%s : exif are %@", __PRETTY_FUNCTION__, exif);
     if(exif) {                                    /* kCGImagePropertyIPTCDictionary kCGImagePropertyExifAuxDictionary */
@@ -429,7 +442,7 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
 
     // text = [NSString stringWithFormat:@"%@ %@",exportName,path];
 
-    cachedata = [NSMutableDictionary dictionaryWithObjectsAndKeys:enable,@"enable",text,@"text",image,@"thumb",exportName,@"file",nil];
+    cachedata = [NSMutableDictionary dictionaryWithObjectsAndKeys:enable,@"enable",text,@"text",image,@"thumb",exportName,@"file",thumbname,@"thumbfile",nil];
     [_cacheImagesInfos setValue:cachedata forKey:indexkey];
     //NSLog(@"%s cache size is %d",__PRETTY_FUNCTION__,[_cacheImagesInfos count]);
     return cachedata;
@@ -475,6 +488,14 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
 
     [mSigmaSlider setFloatValue:0.2];             // sigma (SIGMA > 0).  Default: 0.2
     [self takeSigma:mSigmaSlider];
+	
+}
+
+- (IBAction) runPreview: (id)sender;
+{
+    MLogString(6 ,@"");
+	// right place ??
+	[self buildPreview];
 }
 
 - (IBAction) about: (id)sender;
@@ -492,9 +513,84 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
     }
     [infoPanel makeKeyAndOrderFront:nil];
     #endif
+
 	BOOL openResult;
 	openResult = [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"http://vald70.free.fr/" ] ];
 }
+
+#if 0
+//  test for detecting end of sliding ...
+//
+- (IBAction)takeSaturation:(id)sender {
+	//MLogString(6 ,@"");
+	
+    SEL trackingEndedSelector = @selector(SaturationsliderEnded:);
+    [NSObject cancelPreviousPerformRequestsWithTarget:self
+											 selector:trackingEndedSelector object:sender];
+    [self performSelector:trackingEndedSelector withObject:sender afterDelay:0.0];
+	
+    // do whatever you want to do during tracking here 
+	float theValue = [sender floatValue];
+	[mSaturationTextField setFloatValue:theValue];
+	[mSaturationSlider setFloatValue:theValue];
+	
+}
+
+- (void)SaturationsliderEnded:(id)sender 
+{
+	MLogString(6 ,@"");
+    // do whatever you want to do when tracking ends here 
+    // call preview ?
+	[self buildPreview];
+}
+
+- (IBAction)takeContrast:(id)sender {
+	//MLogString(6 ,@"");
+	
+    SEL trackingEndedSelector = @selector(ContrastsliderEnded:);
+    [NSObject cancelPreviousPerformRequestsWithTarget:self
+											 selector:trackingEndedSelector object:sender];
+    [self performSelector:trackingEndedSelector withObject:sender afterDelay:0.0];
+	
+    // do whatever you want to do during tracking here 
+	float theValue = [sender floatValue];
+	[mContrastTextField setFloatValue:theValue];
+	[mContrastSlider setFloatValue:theValue];	
+}
+
+- (void)ContrastsliderEnded:(id)sender 
+{
+	MLogString(6 ,@"");
+    // do whatever you want to do when tracking ends here 
+    // call preview ?
+	[self buildPreview];
+}
+
+- (IBAction)takeExposure:(id)sender {
+	MLogString(6 ,@"");
+	
+    SEL trackingEndedSelector = @selector(ExposuresliderEnded:);
+    [NSObject cancelPreviousPerformRequestsWithTarget:self
+											 selector:trackingEndedSelector object:sender];
+    [self performSelector:trackingEndedSelector withObject:sender afterDelay:0.0];
+	
+    // do whatever you want to do during tracking here 
+	float theValue = [sender floatValue];
+	[mExposureTextField setFloatValue:theValue];
+	[mExposureSlider setFloatValue:theValue];
+}
+
+- (void)ExposuresliderEnded:(id)sender 
+{
+	MLogString(6 ,@"");
+    // do whatever you want to do when tracking ends here 
+    // call preview ?
+	[self buildPreview];
+}
+
+#else
+// normal way ...
+//
 
 - (IBAction) takeSaturation: (id)sender;
 {
@@ -522,6 +618,8 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
     [mExposureStepper setFloatValue:theValue];
     [mExposureSlider setFloatValue:theValue];
 }
+
+#endif
 
 - (IBAction) takeSigma: (id)sender;
 {
@@ -967,10 +1065,13 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
                     alert = @"no file name !";
                 NSRunAlertPanel (NULL, alert, @"OK", NULL, NULL);
             }
+			MLogString(4,@"show preview of : %@",[self outputfile]);
+			NSImage* _image = [[[NSImage alloc] initWithContentsOfFile:[self outputfile]] autorelease];
+			[mPreviewImage setImage:_image];			
         }
 
         //not used [self openFile:[self outputfile]];
-    }
+		    }
     [mProgressText setStringValue:@""];
     [mEnfuseButton setTitle:@"Enfuse"];
     //[mEnfuseButton setEnabled:YES];
@@ -1281,6 +1382,9 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
 		[mProgressIndicator stopAnimation:self];
 		[mProgressIndicator setDoubleValue:0];
 		[NSApp stopModal];
+		MLogString(4,@"show preview of : %@",[self outputfile]);
+		NSImage* _image = [[[NSImage alloc] initWithContentsOfFile:[self outputfile]] autorelease];
+		[mPreviewImage setImage:_image];			
 		MLogString(6,@"out");
 		[pool release];
 }
@@ -1324,5 +1428,132 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
     return (YES);
 
 } 
+
+#pragma mark -
+#pragma mark TaskWrapper
+
+// This callback is implemented as part of conforming to the ProcessController protocol.
+// It will be called whenever there is output from the TaskWrapper.
+- (void)appendOutput:(NSString *)output
+{
+	MLogString(4 ,@"output is : [%@]", output);
+    // add the string (a chunk of the results from locate) to the NSTextView's
+    // backing store, in the form of an attributed string
+    if ([output hasPrefix:@"Generating"] || [output hasPrefix:@"Collapsing"]  ||
+		[output hasPrefix: @"Loading next image"] || [output hasPrefix: @"Using"] ) {
+	    //MLogString(4 ,@"output is : [%@]", output);
+#ifndef GNUSTEP
+		//NSImage* progress = [myBadge badgeOverlayImageWithProgress:((value)/(2+4*[images count])) insetX:2 y:3];
+#endif
+    } /* else {
+	MLogString(1 ,@"%d output is : [%@]",value, output);
+    } */
+	
+    //[[resultsTextField textStorage] appendAttributedString: [[[NSAttributedString alloc]
+    //                         initWithString: output] autorelease]];
+    // setup a selector to be called the next time through the event loop to scroll
+    // the view to the just pasted text.  We don't want to scroll right now,
+    // because of a bug in Mac OS X version 10.1 that causes scrolling in the context
+    // of a text storage update to starve the app of events
+    //[self performSelector:@selector(scrollToVisible:) withObject:nil afterDelay:0.0];
+}
+
+// A callback that gets called when a TaskWrapper is launched, allowing us to do any setup
+// that is needed from the app side.  This method is implemented as a part of conforming
+// to the ProcessController protocol.
+- (void)processStarted
+{
+    MLogString(6 ,@"");
+	
+    findRunningPreview=YES;
+}
+
+// A callback that gets called when a TaskWrapper is completed, allowing us to do any cleanup
+// that is needed from the app side.  This method is implemented as a part of conforming
+// to the ProcessController protocol.
+- (void)processFinished:(int)status
+{
+    MLogString(6 ,@"status %d",status);
+	
+    findRunningPreview=NO;
+	NSImage* _image = [[[NSImage alloc] initWithContentsOfFile:[self previewfilename:@"enfuse.tif"]] autorelease];
+	[mPreviewImage setImage:_image];
+}
+
+
+// return a somewhat globally unique filename ...
+// 
+-(NSString*)previewfilename:(NSString *)file
+{
+	NSString *tempFilename = [self temppath]; // NSTemporaryDirectory();
+    
+	return [[NSString stringWithFormat:@"%@/thumb_%@",tempFilename,file] retain];
+}
+
+-(void)buildPreview;
+{
+	MLogString(6 ,@"");
+	
+	if (findRunningPreview != NO) {
+		MLogString(5 ,@"preview already running");
+		return ;
+	}	
+	//MLogString(5 ,@"edit count : %d",[[_editManager selectedVersionIds] count]);
+	if ([self countOfImages] == 0) {
+		MLogString(5 ,@"preview : no images");
+		return ;
+	}
+	
+	NSMutableArray *args = [NSMutableArray array];
+	
+	NSBundle *myBundle = [NSBundle bundleForClass:[self class]];
+	NSString* enfuse_path = [NSString stringWithFormat:@"%@%@",[myBundle resourcePath],
+		@"/enfuse"];
+	
+	MLogString(1 ,@"path %@",enfuse_path);
+	
+	[args addObject:enfuse_path];
+	
+	[args addObject:@"-o"];
+	[args addObject:[self previewfilename:@"enfuse.tif"]];
+	MLogString(4 ,@"preview file is %@",[self previewfilename:@"enfuse.tif"]);
+	
+	// gather thumbnail ...
+	int i;
+	int count = [self countOfImages];
+	NSDictionary* obj=nil;
+	
+	for (i = 0; i < count; i++) {
+		NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+		obj = [self objectInImagesAtIndex:i];
+		//MLogString(4 ,@"%@",obj);
+		if (obj != nil) {
+			NSString* path = [obj valueForKey:@"thumbfile"];
+			if (path != nil) {
+				//MLogString(4 ,@"add %@",path);
+				[args addObject:path];
+			}
+		}
+		[pool release];
+	}
+
+	
+	// gather parameters ...
+	[args addObject:[NSString stringWithFormat:@"--wExposure=%@",[mExposureSlider stringValue]]];
+	[args addObject:[NSString stringWithFormat:@"--wSaturation=%@",[mSaturationSlider stringValue]]];
+	[args addObject:[NSString stringWithFormat:@"--wContrast=%@",[mContrastSlider stringValue]]];
+	
+	[args addObject:[NSString stringWithFormat:@"--wMu=%@",[mMuSlider stringValue]]];
+	[args addObject:[NSString stringWithFormat:@"--wSigma=%@",[mSigmaSlider stringValue]]];
+	
+	TaskWrapper* previewTask=[[TaskWrapper alloc] initWithController:self arguments:args];
+	
+	int status = [previewTask startProcess];
+	if (status != 0) {
+		NSRunAlertPanel (NSLocalizedString(@"Fatal Error",@""), @"running error", @"OK", NULL, NULL);
+	} else  {
+	       [previewTask waitUntilExit];
+	}
+}
 
 @end

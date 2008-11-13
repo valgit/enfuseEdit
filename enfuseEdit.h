@@ -88,6 +88,8 @@
   IBOutlet NSTextField *mAppendTo;
   IBOutlet NSMatrix *mOutputType;
   IBOutlet NSSlider *mOutputQualitySlider; 
+  
+  IBOutlet NSImageView *mPreviewImage;
 
 	 IBOutlet ExportOptionsController* exportOptionsSheetController;
 	
@@ -101,6 +103,7 @@
 	// task handling
   NSString *_enfusePath; 
   BOOL findRunning;
+  BOOL findRunningPreview;
   
   //TaskWrapper *enfuseTask;
   
