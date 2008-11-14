@@ -527,7 +527,8 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
     SEL trackingEndedSelector = @selector(SaturationsliderEnded:);
     [NSObject cancelPreviousPerformRequestsWithTarget:self
 											 selector:trackingEndedSelector object:sender];
-    [self performSelector:trackingEndedSelector withObject:sender afterDelay:0.0];
+    [self performSelector:trackingEndedSelector withObject:sender afterDelay:0.0
+		inModes:[NSArray arrayWithObjects:NSDefaultRunLoopMode,NSModalPanelRunLoopMode, NSEventTrackingRunLoopMode, nil]];
 	
     // do whatever you want to do during tracking here 
 	float theValue = [sender floatValue];
