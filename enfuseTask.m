@@ -25,6 +25,8 @@
 			@"/enfuse"] retain];
 		[args addObject:enfuse_path];
 			
+		[args addObject:@"-v"];
+		
 		  NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 		   //NSLog(@"icc : %@",[defaults boolForKey:@"useCIECAM02"]);
 		   if ([defaults boolForKey:@"useCIECAM"]) { // ICC profile

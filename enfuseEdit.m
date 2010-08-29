@@ -13,7 +13,9 @@
 #import "TaskProgressInfo.h"
 
 // Categories : private methods
-@interface enfuseEdit (Private)
+@interface enfuseEdit (Private) <TaskWrapperController>
+
+- (void)showAlert:(NSString*)alertmsg;
 
 -(void)setDefaults;
 -(void)getDefaults;
@@ -32,6 +34,10 @@
 
 -(NSString*)previewfilename:(NSString *)file;
 -(void)buildPreview;
+
+- (void)appendOutput:(NSString *)outpu;
+- (void)processStarted;
+- (void)processFinished:(int)status;
 @end
 
 @implementation enfuseEdit
@@ -107,7 +113,7 @@
 {
     MLogString(6 ,@"");
 
-#if 1
+#if 0
 	NSDate *expirationDate = 
 	[[NSDate dateWithNaturalLanguageString:
 			[NSString stringWithCString:__DATE__]] 
@@ -166,9 +172,11 @@
 		if (!pathok) {
 			 NSRunAlertPanel (NSLocalizedString(@"Installation Error",@""),
 						@"", NSLocalizedString(@"OK",nil), NULL, NULL);
+#if 0
 			[self cleanuptempdir];
 
 			[_editManager endEditSession];
+#endif
 		}
     }
 
@@ -773,6 +781,7 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
             // but will still return the appropriate properties.
             // format ? requestedFormat:kApertureImageFormatTIFF8
             NSArray *properties = [_editManager editableVersionsOfVersions:[_editManager selectedVersionIds] stackWithOriginal:YES];
+#pragma mark TODO : do smething with properties
             //NSLog(@"%s editables propos are : << %@ >>",__PRETTY_FUNCTION__,properties);
 
             int i, count = [[_editManager editableVersionIds]  count];
@@ -948,14 +957,25 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
     [enfusetask addArg:@"--compression=LZW"];
     #endif
 
-    [enfusetask addArg:[NSString stringWithFormat:@"--wExposure=%@",[mExposureSlider stringValue]]];
-
+#if _OLD_VER_
+	[enfusetask addArg:[NSString stringWithFormat:@"--wExposure=%@",[mExposureSlider stringValue]]];
+	
     [enfusetask addArg:[NSString stringWithFormat:@"--wSaturation=%@",[mSaturationSlider stringValue]]];
     [enfusetask addArg:[NSString stringWithFormat:@"--wContrast=%@",[mContrastSlider stringValue]]];
-
+	
     [enfusetask addArg:[NSString stringWithFormat:@"--wMu=%@",[mMuSlider stringValue]]];
     [enfusetask addArg:[NSString stringWithFormat:@"--wSigma=%@",[mSigmaSlider stringValue]]];
-
+	
+#else
+	[enfusetask addArg:[NSString stringWithFormat:@"--exposure-weight=%@",[mExposureSlider stringValue]]];
+	
+    [enfusetask addArg:[NSString stringWithFormat:@"--saturation-weight=%@",[mSaturationSlider stringValue]]];
+    [enfusetask addArg:[NSString stringWithFormat:@"--contrast-weight=%@",[mContrastSlider stringValue]]];
+	
+    [enfusetask addArg:[NSString stringWithFormat:@"--exposure-mu=%@",[mMuSlider stringValue]]];
+    [enfusetask addArg:[NSString stringWithFormat:@"--exposure-sigma=%@",[mSigmaSlider stringValue]]];
+#endif
+	
     [mProgressIndicator setDoubleValue:0.0];
     [mProgressIndicator setMaxValue:(1+4*[self countOfImages])];
     [mProgressIndicator startAnimation:self];
@@ -1054,7 +1074,8 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
 					else
 						alert = @"no file name !";
 					
-						NSRunAlertPanel (NULL, alert , @"OK", NULL, NULL);
+						//NSRunAlertPanel (NULL, alert , @"OK", NULL, NULL);
+						[self performSelectorOnMainThread:@selector(showAlert:) withObject:alert waitUntilDone:YES];
 				}
             }
             else {
@@ -1064,7 +1085,8 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
                     alert = [file stringByAppendingString: @" do not exist!\nCan't rename"];
                 else
                     alert = @"no file name !";
-                NSRunAlertPanel (NULL, alert, @"OK", NULL, NULL);
+                //NSRunAlertPanel (NULL, alert, @"OK", NULL, NULL);
+				[self performSelectorOnMainThread:@selector(showAlert:) withObject:alert waitUntilDone:YES];
             }
 			MLogString(4,@"show preview of : %@",[self outputfile]);
 			NSImage* _image = [[[NSImage alloc] initWithContentsOfFile:[self outputfile]] autorelease];
@@ -1243,6 +1265,22 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
 	[self setDefaults];
 }
 
+- (void)showAlert:(NSString*)alertmsg;
+{
+	MLogString(4,@"alert is : %@",alertmsg);
+#if 1
+	NSAlert *alert = [[NSAlert alloc] init];
+    [alert addButtonWithTitle:@"OK"];
+    //[alert setMessageText:@"Delete the record?"];
+    [alert setInformativeText:alertmsg];
+    [alert setAlertStyle:/*NSInformationalAlertStyle*/NSCriticalAlertStyle];
+	[alert runModal];
+    //[alert beginSheetModalForWindow:myWindow modalDelegate:self didEndSelector:@selector(alertDidEnd:returnCode:contextInfo:) contextInfo:nil];
+#else
+	[[NSAlert alertWithMessageText:alertmsg defaultButton:@"OK" alternateButton:nil otherButton:nil informativeTextWithFormat:nil] runModal];
+#endif
+}
+
 -(BOOL)checkApplicationPath;
 {
 	NSBundle *myBundle = [NSBundle bundleForClass:[self class]];
@@ -1253,7 +1291,8 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
         // check for enfuse binaries...
         if([[NSFileManager defaultManager] isExecutableFileAtPath:path]==NO) {
             NSString *alert = [path stringByAppendingString: @" is not executable!"];
-            NSRunAlertPanel (NULL, alert, @"OK", NULL, NULL);
+            //NSRunAlertPanel (NULL, alert, @"OK", NULL, NULL);
+			[self performSelectorOnMainThread:@selector(showAlert:) withObject:alert waitUntilDone:YES];
             return NO;
         }
 
@@ -1264,7 +1303,8 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
         // check for enfuse binaries...
         if([[NSFileManager defaultManager] isExecutableFileAtPath:path]==NO) {
             NSString *alert = [path stringByAppendingString: @" is not executable!"];
-            NSRunAlertPanel (NULL, alert, @"OK", NULL, NULL);
+            //NSRunAlertPanel (NULL, alert, @"OK", NULL, NULL);
+			[self performSelectorOnMainThread:@selector(showAlert:) withObject:alert waitUntilDone:YES];
             return NO;
         }
     return YES;
@@ -1540,12 +1580,22 @@ NSArray *properties = [_editManager editableVersionsOfVersions:[NSArray arrayWit
 
 	
 	// gather parameters ...
+#if _OLD_VER_
 	[args addObject:[NSString stringWithFormat:@"--wExposure=%@",[mExposureSlider stringValue]]];
 	[args addObject:[NSString stringWithFormat:@"--wSaturation=%@",[mSaturationSlider stringValue]]];
 	[args addObject:[NSString stringWithFormat:@"--wContrast=%@",[mContrastSlider stringValue]]];
 	
 	[args addObject:[NSString stringWithFormat:@"--wMu=%@",[mMuSlider stringValue]]];
 	[args addObject:[NSString stringWithFormat:@"--wSigma=%@",[mSigmaSlider stringValue]]];
+#else
+	[args addObject:[NSString stringWithFormat:@"--exposure-weight=%@",[mExposureSlider stringValue]]];
+	[args addObject:[NSString stringWithFormat:@"--saturation-weight=%@",[mSaturationSlider stringValue]]];
+	[args addObject:[NSString stringWithFormat:@"--contrast-weight=%@",[mContrastSlider stringValue]]];
+	
+	[args addObject:[NSString stringWithFormat:@"--exposure-mu=%@",[mMuSlider stringValue]]];
+	[args addObject:[NSString stringWithFormat:@"--exposure-sigma=%@",[mSigmaSlider stringValue]]];
+	
+#endif
 	
 	TaskWrapper* previewTask=[[TaskWrapper alloc] initWithController:self arguments:args];
 	
